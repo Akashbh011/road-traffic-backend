@@ -2,6 +2,7 @@ import express from "express";
 import modelRoute from "./routes/model.route.js"
 import connectDB from "./mongoose/connection.js"
 import userRoute from "./routes/user.route.js"
+import loginRoute from "./routes/userLogin.route.js" 
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -21,7 +22,10 @@ connectDB().then(()=>{
 }).catch((err)=>{
     console.log("MONGODB connection failed!!! ",err)
 })
-app.use("/api/users",userRoute);
+app.use("/api/register",userRoute);
+
+app.use("/api/login",loginRoute);
+
 app.use("/api/model",modelRoute);
 
-
+app.use("/api/complaint",modelRoute);

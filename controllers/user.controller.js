@@ -23,4 +23,18 @@ export const registerUser = async (req, res) => {
   }
 };
 
+export const loginUser= async (req,res)=>{
+
+  const {name,password}=req.body;
+
+  const existingLogin= await User.findOne({name:name,password:password});
+  if(!existingLogin){
+    res.status(201).json({message:'please do registration first'});
+  }
+
+  // res.render('/',home);
+  res.status(201).json({message:'you have successfully logged in !'});
+
+};
+
 //  export const login /reg
