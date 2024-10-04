@@ -3,12 +3,12 @@ import { Complaint } from '../models/complaint.model.js';
 // Function to handle user registration
 export const registerComplaint = async (req, res) => {
   try {
-    const { userId ,longitude , latitude , complaint } = req.body;
+    const {  user,Longitude , Latitude , complaint } = req.body;
 
     // Check if the user already exists
     
     
-    const newComplaint = new User({ userId,longitude , latitude , complaint });
+    const newComplaint = new Complaint({ user,Longitude , Latitude , complaint });
     const savedCompaint = await newComplaint.save();
     console.log("new complaint has been saved !");
     // console.log(savedUser);
@@ -16,7 +16,7 @@ export const registerComplaint = async (req, res) => {
     res.status(201).json(savedCompaint);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Error creating complaint' });
+    res.status(500).json({ message: 'Error raising complaint' });
   }
 };
 

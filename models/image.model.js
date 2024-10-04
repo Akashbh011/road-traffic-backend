@@ -19,6 +19,11 @@ const { Schema } = mongoose;
         latitude:{
             type:Number,
             required:true
+        }, 
+        isresolved:{
+            type:Boolean,
+            required:true,
+            default:false
         }
     },
     {
