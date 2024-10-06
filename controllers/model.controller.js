@@ -21,12 +21,14 @@ const getPrediction = async (req, res) => {
     }
 
     console.log("uploaded image  details : ", uploadedImage);
-    const pathneeded=uploadedImage.path;
+    console.log(uploadedImage.path);
+    const file_url=uploadedImage.path;
 
     // Create FormData and append the image for Flask API
     const formData = new FormData();
     // Use the image buffer directly since you're not saving it manually
-    formData.append('file', uploadedImage.buffer, uploadedImage.originalname);
+    //MULTER DOESNT DIRECTLY CONNTAINS THE FILE INSIDE ANY BUFFER INSTEAD I IMMEDIATELY UPLOADS THE FILE TO THE CLOUDINARY THATS THE REASON TYPEERROR WAS THERE
+    formData.append('file', file_url);
 
     // Send the image to the Flask API for prediction
     const flaskResponse = await axios.post('http://127.0.0.1:3003/predict', formData, {
@@ -34,12 +36,13 @@ const getPrediction = async (req, res) => {
     });
 
     const prediction = flaskResponse.data.prediction; // Get the prediction result
+    console.log(prediction);
 
     if (prediction === 'pothole') {
 
       
 
-      console.log("the url which we want :",pathneeded);
+      console.log("the url which we want :",file_url);
       // Save the image data to MongoDB
       const user = await User.findOne({ name:username });
       console.log(user);
@@ -47,7 +50,7 @@ const getPrediction = async (req, res) => {
       
 
       const newImage = new Image({
-        src: pathneeded, // Make sure you have the secure URL after uploading to Cloudinary
+        src: file_url, // Make sure you have the secure URL after uploading to Cloudinary
         user: newuserId, // User ID
         longitude: longitude, // Longitude
         latitude: latitude, // Latitude
