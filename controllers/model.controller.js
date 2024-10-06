@@ -3,34 +3,15 @@ import axios from "axios";
 import { User } from "../models/user.model.js";
 import FormData from "form-data"; 
 import { Image } from "../models/image.model.js";
-import { v2 as cloudinary } from "cloudinary";
-import { CloudinaryStorage } from "multer-storage-cloudinary";
-import dotenv from 'dotenv';
-dotenv.config();
+import {cloudinary, storage } from "../mongoose/cloudinaryConfig.js";
 
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
 
-// Configure Multer to use Cloudinary for storage
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: "uploads", // Folder in Cloudinary
-    format: async () => "jpg", // Change to match your image type (png, jpg, etc.)
-    public_id: (req, file) => file.originalname, // Use the original file name
-  },
-});
-
-const upload = multer({ storage });
+export const upload = multer({ storage });
 
 const getPrediction = async (req, res) => {
   try {
-    const { longitude, latitude, userId } = req.body; // Extract additional info from request body
-
+    const { longitude, latitude, username } = req.body; // Extract additional info from request body
+    console.log(username);
     // Get the uploaded image from Multer
     const uploadedImage = req.file;
 
@@ -39,7 +20,8 @@ const getPrediction = async (req, res) => {
       return res.status(400).json({ error: 'No file uploaded' });
     }
 
-    console.log("uploaded image url details : ", uploadedImage.secure_url);
+    console.log("uploaded image  details : ", uploadedImage);
+    const pathneeded=uploadedImage.path;
 
     // Create FormData and append the image for Flask API
     const formData = new FormData();
@@ -55,20 +37,17 @@ const getPrediction = async (req, res) => {
 
     if (prediction === 'pothole') {
 
-      res.json({
-        message: "Image uploaded and saved successfully",
-        prediction: prediction,  // Send the prediction result
-       
-      });
+      
 
-
+      console.log("the url which we want :",pathneeded);
       // Save the image data to MongoDB
-      const user = await User.findOne({ userId });
+      const user = await User.findOne({ name:username });
+      console.log(user);
       const newuserId = user._id;
-      console.log("the url which we want :",uploadedImage.secure_url);
+      
 
       const newImage = new Image({
-        src: uploadedImage.secure_url, // Make sure you have the secure URL after uploading to Cloudinary
+        src: pathneeded, // Make sure you have the secure URL after uploading to Cloudinary
         user: newuserId, // User ID
         longitude: longitude, // Longitude
         latitude: latitude, // Latitude
