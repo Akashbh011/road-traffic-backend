@@ -3,17 +3,17 @@ import jwt from "jsonwebtoken";
 // Function to handle user registration
 export const registerUser = async (req, res) => {
   try {
-    const { name, email, password, phoneNumber } = req.body;
+    const { username, email, password, mobile_number } = req.body;
 
     // Check if the user already exists
-    const existingUser = await User.findOne({ phoneNumber });
+    const existingUser = await User.findOne({ mobile_number });
     if (existingUser) {
       return res
         .status(400)
         .json({ message: "User with this phone number already exists" });
     }
 
-    const newUser = new User({ name, email, password, phoneNumber });
+    const newUser = new User({ username, email, password, mobile_number });
     const savedUser = await newUser.save();
     console.log("new user has been saved !");
     // console.log(savedUser);
@@ -26,11 +26,14 @@ export const registerUser = async (req, res) => {
 };
 
 export const loginUser = async (req, res) => {
-  const { name, password } = req.body;
+  const { username, password } = req.body;
   try {
-    const info = await User.findOne({ name: name, password: password });
+    const info = await User.findOne({ username: username, password: password });
     if (!info) {
-      res.status(201).json({ message: "please do registration first" });
+      console.log("hi");
+      return res.status(400).json({ message: "please do registration first" });
+    }else{
+      console.log(info)
     }
 
     const user = info._doc;

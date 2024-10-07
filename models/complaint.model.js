@@ -19,15 +19,14 @@ const { Schema } = mongoose;
             type:String,
             required:true
         },
-        isresolved:{
-            type:Boolean,
-            required:true,
-            default:false
-        },
         category:{
             type:String,
             required:true
-        }
+        },
+        isresolved:{
+            type:Boolean,
+            default:false
+        },
     },
     {
         timestamps:true

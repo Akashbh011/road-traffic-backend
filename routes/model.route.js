@@ -1,11 +1,10 @@
 import express from 'express';
 import getPrediction from '../controllers/model.controller.js';
-import multer from 'multer';  // Import multer here
+import { upload } from '../middlewares/multer.middleware.js';
 
 const router = express.Router();
 
-const upload = multer(); // Configure multer to handle file uploads
 
-router.post("/", upload.single('image'), getPrediction);  // Add multer middleware
+router.post("/", upload.single('image'), getPrediction); 
 
 export default router;

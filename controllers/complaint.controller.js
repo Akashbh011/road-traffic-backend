@@ -3,12 +3,12 @@ import { Complaint } from '../models/complaint.model.js';
 // Function to handle user registration
 export const registerComplaint = async (req, res) => {
   try {
-    const {  user,Longitude , Latitude , complaint } = req.body;
+    const {  userId,lng , lat , complaint,category } = req.body;
 
     // Check if the user already exists
     
     
-    const newComplaint = new Complaint({ user,Longitude , Latitude , complaint });
+    const newComplaint = new Complaint({ user:userId,longitude:lng ,latitude: lat ,complaint: complaint,category:category });
     const savedCompaint = await newComplaint.save();
     console.log("new complaint has been saved !");
     // console.log(savedUser);

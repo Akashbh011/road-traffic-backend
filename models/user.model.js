@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 const userSchema = new Schema(
   {
     
-    name: {
+    username: {
       type: String,
       required: true,
     },
@@ -17,12 +17,11 @@ const userSchema = new Schema(
       required: true,
       minlength: 6, // Minimum length for security
     },
-    phoneNumber: {
+    mobile_number: {
       type: String,
       required: true,
       unique: true, // Ensure phone numbers are unique
-    },
-    
+    }, 
   },
   {
     timestamps: true, // Automatically manage createdAt and updatedAt fields

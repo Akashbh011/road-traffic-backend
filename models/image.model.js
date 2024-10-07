@@ -22,7 +22,6 @@ const { Schema } = mongoose;
         }, 
         isresolved:{
             type:Boolean,
-            required:true,
             default:false
         }
     },
