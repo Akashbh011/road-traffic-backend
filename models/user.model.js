@@ -22,6 +22,10 @@ const userSchema = new Schema(
       required: true,
       unique: true, // Ensure phone numbers are unique
     }, 
+    citizen_score:{
+      type:Number,
+      default:0,
+    }
   },
   {
     timestamps: true, // Automatically manage createdAt and updatedAt fields

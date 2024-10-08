@@ -3,6 +3,7 @@ import FormData from "form-data";
 import { Image } from "../models/image.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import fs from "fs";
+import { User } from "../models/user.model.js";
 
 
 const getPrediction = async (req, res) => {
@@ -10,31 +11,33 @@ const getPrediction = async (req, res) => {
     const { userId,lng,lat } = req.body; // Extract additional info from request body
     // Get the uploaded image from Multer
     const uploadedImage = req.file;
-    console.log("userid is"+lat)
     // Check if uploadedImage exists
     if (!uploadedImage) {
-      console.log("not");
       return res.status(400).json({ error: 'No file uploaded' });
     }
-
+    const filePath = uploadedImage.path
     // Create FormData and append the image for Flask API
     const formData = new FormData();
-    // Use the image buffer directly since you're not saving it manually
+    // // Use the image buffer directly since you're not saving it manually
 
-    formData.append('file', uploadedImage.buffer, uploadedImage.originalname);
+    formData.append('file', fs.createReadStream(filePath));
 
-    // Send the image to the Flask API for prediction
+    // // Send the image to the Flask API for prediction
 
     const flaskResponse = await axios.post('http://127.0.0.1:3003/predict', formData, {
-       headers: { ...formData.getHeaders() },
+        headers: { ...formData.getHeaders() },
     });
 
     const prediction = flaskResponse.data.prediction; // Get the prediction result
 
-
     if (prediction === 'pothole') {
 
       const cloudurl = await uploadOnCloudinary(uploadedImage.path)
+
+      await User.updateOne(
+        { _id: userId }, 
+        { $inc: { citizen_score: 50 } }
+      );
 
       console.log("the url which we want :",cloudurl.secure_url);
 
@@ -51,12 +54,7 @@ const getPrediction = async (req, res) => {
         message: "Image uploaded and saved successfully",
         prediction: prediction,  // Send the prediction result
       });
-
-      fs.unlink((uploadedImage.path),function(err){
-        if(err) console.log(err);
-        else console.log("\nDeleted file");
-      })
-
+      
     } else {
       // If the prediction is not 'pothole', skip saving the image
       res.json({
@@ -64,6 +62,7 @@ const getPrediction = async (req, res) => {
         prediction: prediction,
       });
     }
+
   } catch (error) {
     console.error("Error processing the image:", error);
     res.status(500).json({ error: 'Error processing image and prediction' });

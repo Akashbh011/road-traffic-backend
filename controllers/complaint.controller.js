@@ -1,16 +1,27 @@
 import { Complaint } from '../models/complaint.model.js';
-
+import { uploadOnCloudinary } from '../utils/cloudinary.js';
 // Function to handle user registration
 export const registerComplaint = async (req, res) => {
   try {
-    const {  userId,lng , lat , complaint,category } = req.body;
+    const {  userId,lng , lat , category } = req.body;
 
-    // Check if the user already exists
-    
-    
-    const newComplaint = new Complaint({ user:userId,longitude:lng ,latitude: lat ,complaint: complaint,category:category });
+    const uploadedImage = req.file;
+    if (!uploadedImage) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+  
+    const cloudurl = await uploadOnCloudinary(uploadedImage.path)
+
+      // await User.updateOne(
+      //   { _id: userId }, 
+      //   { $inc: { citizen_score: 50 } }
+      // );
+
+    console.log("the url of complaint :",cloudurl.secure_url);
+
+    const newComplaint = new Complaint({ user:userId,longitude:lng ,latitude: lat ,src:cloudurl.secure_url,category:category });
     const savedCompaint = await newComplaint.save();
-    console.log("new complaint has been saved !");
+    console.log("New Complaint has been saved !");
     // console.log(savedUser);
 
     res.status(201).json(savedCompaint);
