@@ -6,7 +6,7 @@ import fs from "fs";
 import { User } from "../models/user.model.js";
 
 
-const getPrediction = async (req, res) => {
+export const getPrediction = async (req, res) => {
   try {
     const { userId,lng,lat } = req.body; // Extract additional info from request body
     // Get the uploaded image from Multer
@@ -69,5 +69,18 @@ const getPrediction = async (req, res) => {
   }
 };
 
-export default getPrediction;
+
+export const getPotholeDatamodel = async (req, res) => {
+    try {
+      console.log("this is the backend call !");
+        const images = await Image.find({});
+        console.log(images);
+        res.json(images);
+
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error fetching pothole images' });
+    }
+  };
+
 

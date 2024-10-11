@@ -4,8 +4,7 @@ import connectDB from "./mongoose/connection.js"
 import authRoute from "./routes/auth.route.js"
 import complaintRoute from "./routes/complaint.route.js"
 import dotenv from "dotenv";
-import getPotholeData from "./routes/getPotholeData.route.js"
-import getComplaintData from "./routes/getComplaintData.route.js"
+
 
 
 dotenv.config({
@@ -35,5 +34,6 @@ connectDB()
 app.use("/api/auth",authRoute);
 app.use("/api/model",modelRoute);
 app.use("/api/complaint",complaintRoute);
-app.use("/api/getComplaintData",getComplaintData);
-app.use("/api/getPotholeData",getPotholeData);
+
+// app.use("/api/getComplaintData",getComplaintData);
+// app.use("/api/getPotholeData",getPotholeData);

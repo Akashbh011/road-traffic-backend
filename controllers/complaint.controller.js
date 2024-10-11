@@ -1,5 +1,6 @@
 import { Complaint } from '../models/complaint.model.js';
 import { uploadOnCloudinary } from '../utils/cloudinary.js';
+
 // Function to handle user registration
 export const registerComplaint = async (req, res) => {
   try {
@@ -32,3 +33,19 @@ export const registerComplaint = async (req, res) => {
 };
 
 //  export const login /reg
+
+
+
+export const getComplaintDatamodel = async (req, res) => {
+    try {
+      console.log("this is the backend call !");
+        const complaints = await Complaint.find({});
+        console.log(complaints);
+        res.json(complaints);
+
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error fetching complaints' });
+    }
+  };
+  
