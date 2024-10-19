@@ -30,28 +30,23 @@ export const loginUser = async (req, res) => {
   try {
     const info = await User.findOne({ username: username, password: password });
     if (!info) {
-      console.log("hi");
-      return res.status(400).json({ message: "please do registration first" });
-    }else{
-      console.log(info)
+      return res.status(400).json({ message: "Please register first" });
     }
 
     const user = info._doc;
-    console.log(user);
-
     const age = 1000 * 60 * 60 * 24 * 7;
 
+    // Set isAdmin flag based on user's role from the database
     const token = jwt.sign(
       {
         id: user._id,
-        isAdmin: false,
+        isAdmin: user.role === 'admin',
       },
       process.env.JWT_SECRET_KEY,
       { expiresIn: age }
     );
 
     const { password: userPassword, ...userInfo } = user;
-    console.log(userInfo);
 
     res
       .cookie("token", token, {
@@ -65,6 +60,7 @@ export const loginUser = async (req, res) => {
     res.status(500).json({ message: "Failed to login!" });
   }
 };
+
 
 export const logout = (req, res) => {
   res.clearCookie("token").status(200).json({ message: "Logout Successful" });

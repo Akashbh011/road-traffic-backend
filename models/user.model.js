@@ -25,6 +25,10 @@ const userSchema = new Schema(
     citizen_score:{
       type:Number,
       default:0,
+    },
+    role:{
+      type:String,
+      default:"user"
     }
   },
   {

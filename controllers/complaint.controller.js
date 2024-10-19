@@ -41,7 +41,6 @@ export const getComplaintDatamodel = async (req, res) => {
     try {
       console.log("this is the backend call !");
         const complaints = await Complaint.find({});
-        console.log(complaints);
         res.json(complaints);
 
     } catch (error) {

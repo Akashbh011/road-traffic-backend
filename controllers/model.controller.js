@@ -72,7 +72,6 @@ export const getPotholeDatamodel = async (req, res) => {
     try {
       console.log("this is the backend call !");
         const images = await Image.find({});
-        console.log(images);
         res.json(images);
 
     } catch (error) {

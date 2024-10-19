@@ -5,7 +5,7 @@ import authRoute from "./routes/auth.route.js"
 import complaintRoute from "./routes/complaint.route.js"
 import eventRoute from "./routes/event.route.js"
 import dotenv from "dotenv";
-
+import userRoute from "./routes/user.route.js"
 
 
 dotenv.config({
@@ -36,4 +36,5 @@ app.use("/api/auth",authRoute);
 app.use("/api/model",modelRoute);
 app.use("/api/complaint",complaintRoute);
 app.use("/api/event",eventRoute)
+app.use("/api/user",userRoute)
 
