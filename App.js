@@ -3,6 +3,7 @@ import modelRoute from "./routes/model.route.js"
 import connectDB from "./mongoose/connection.js"
 import authRoute from "./routes/auth.route.js"
 import complaintRoute from "./routes/complaint.route.js"
+import eventRoute from "./routes/event.route.js"
 import dotenv from "dotenv";
 
 
@@ -34,6 +35,5 @@ connectDB()
 app.use("/api/auth",authRoute);
 app.use("/api/model",modelRoute);
 app.use("/api/complaint",complaintRoute);
+app.use("/api/event",eventRoute)
 
-// app.use("/api/getComplaintData",getComplaintData);
-// app.use("/api/getPotholeData",getPotholeData);

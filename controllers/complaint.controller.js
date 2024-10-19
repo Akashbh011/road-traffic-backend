@@ -1,3 +1,4 @@
+
 import { Complaint } from '../models/complaint.model.js';
 import { uploadOnCloudinary } from '../utils/cloudinary.js';
 
@@ -48,4 +49,8 @@ export const getComplaintDatamodel = async (req, res) => {
       res.status(500).json({ message: 'Error fetching complaints' });
     }
   };
+  
+
+
+
   

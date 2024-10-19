@@ -8,21 +8,19 @@ import { User } from "../models/user.model.js";
 
 export const getPrediction = async (req, res) => {
   try {
-    const { userId,lng,lat } = req.body; // Extract additional info from request body
-    // Get the uploaded image from Multer
+    const { userId,lng,lat } = req.body; 
+
     const uploadedImage = req.file;
-    // Check if uploadedImage exists
+
     if (!uploadedImage) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
     const filePath = uploadedImage.path
-    // Create FormData and append the image for Flask API
+
     const formData = new FormData();
-    // // Use the image buffer directly since you're not saving it manually
+
 
     formData.append('file', fs.createReadStream(filePath));
-
-    // // Send the image to the Flask API for prediction
 
     const flaskResponse = await axios.post('http://127.0.0.1:3003/predict', formData, {
         headers: { ...formData.getHeaders() },
@@ -52,11 +50,11 @@ export const getPrediction = async (req, res) => {
 
       res.json({
         message: "Image uploaded and saved successfully",
-        prediction: prediction,  // Send the prediction result
+        prediction: prediction,  
       });
       
     } else {
-      // If the prediction is not 'pothole', skip saving the image
+
       res.json({
         message: "Prediction is not 'pothole', image not saved",
         prediction: prediction,
