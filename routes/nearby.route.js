@@ -1,8 +1,8 @@
 import express from 'express';
 const router = express.Router();
-import { getNearbyplacedata } from '../controllers/nearby.controller.js';
+import { getNearbyPlaceData } from '../controllers/nearby.controller.js';
 
 
-router.post('/',getNearbyplacedata); 
+router.post('/',getNearbyPlaceData); 
 
 export default router;

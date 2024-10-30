@@ -1,59 +1,82 @@
 import axios from "axios";
 
-export const getNearbyplacedata = async (req, res) => {
-    console.log("This is the Google Maps API key backend!");
-    const { location, radius, keyword } = req.body.params;
-    const keywords = keyword.split(" ");
-    console.log("keywords are -", keywords);
-    const apiKey = process.env.GOOGLE_MAPS_API_KEY;
-   
+const calculateDistance = (coord1, coord2) => {
+  const R = 6371e3; // Earth radius in meters
+  const rad = (degrees) => (degrees * Math.PI) / 180;
 
-    try {
-        let combinedResults = [];
+  const dLat = rad(coord2.lat - coord1.lat);
+  const dLng = rad(coord2.lng - coord1.lng);
+  const a = 
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(rad(coord1.lat)) * Math.cos(rad(coord2.lat)) * 
+    Math.sin(dLng / 2) ** 2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-        // Loop through each keyword and fetch nearby places with pagination
-        for (let word of keywords) {
-            let nextPageToken = null;
-            
-            do {
-                const response = await axios.get(
-                    `https://maps.googleapis.com/maps/api/place/nearbysearch/json`,
-                    {
-                        params: {
-                            location,
-                            radius,
-                            keyword: word,
-                            key: apiKey,
-                            pagetoken: nextPageToken,
-                        },
-                    }
-                );
-
-                // Add new results while filtering out duplicates
-                combinedResults = [
-                    ...combinedResults,
-                    ...response.data.results.filter(
-                        place => !combinedResults.some(existing => existing.place_id === place.place_id)
-                    ),
-                ];
-
-                // Update nextPageToken for pagination; if no more pages, set it to null
-                nextPageToken = response.data.next_page_token || null;
-
-                // Wait for 2 seconds if there's a next page token (Google API requirement)
-                if (nextPageToken) {
-                    await new Promise((resolve) => setTimeout(resolve, 2000));
-                }
-            } while (nextPageToken);
-        }
-
-        res.json({ results: combinedResults });
-    } catch (error) {
-        console.error("Error fetching data from Google API:", error);
-        res.status(500).json({ error: 'Error fetching data from Google API' });
-    }
+  return R * c; // Distance in meters
 };
 
+const filterInstitutionsByRoute = (institutions, routePoint) => {
+  return institutions.filter((institution) =>
+    calculateDistance(routePoint, {
+      lat: institution.geometry.location.lat,
+      lng: institution.geometry.location.lng,
+    }) <= 50
+  );
+};
+
+export const getNearbyPlaceData = async (req, res) => {
+  const { routePoints, keyword } = req.body.params;
+  const keywords = keyword.split(" ");
+  const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+  const radius = 50; // Set radius for Google API request
+
+  try {
+    let combinedResults = [];
+
+    for (let i = 0; i < routePoints.length; i += 3) {
+      const point = routePoints[i];
+
+      for (let word of keywords) {
+        let nextPageToken = null;
+
+        do {
+          const response = await axios.get(
+            `https://maps.googleapis.com/maps/api/place/nearbysearch/json`,
+            {
+              params: {
+                location: `${point.lat},${point.lng}`,
+                radius,
+                keyword: word,
+                key: apiKey,
+                pagetoken: nextPageToken,
+              },
+            }
+          );
+          console.log(response);
+          // Filter institutions by the current route point within 50m distance
+          const nearbyInstitutions = filterInstitutionsByRoute(response.data.results, point);
+          combinedResults = [
+            ...combinedResults,
+            ...nearbyInstitutions.filter(
+              (place) => !combinedResults.some((existing) => existing.place_id === place.place_id)
+            ),
+          ];
+
+          nextPageToken = response.data.next_page_token || null;
+          if (nextPageToken) await new Promise((resolve) => setTimeout(resolve, 2000));
+        } while (nextPageToken);
+      }
+    }
+
+    res.json({ results: combinedResults });
+  } catch (error) {
+    console.error("Error fetching data from Google API:", error);
+    res.status(500).json({ error: 'Error fetching data from Google API' });
+  }
+};
+
+
+//v1
 
 // // import axios from "axios";
 
