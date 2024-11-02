@@ -3,41 +3,89 @@ import axios from "axios";
 const calculateDistance = (coord1, coord2) => {
   const R = 6371e3; // Earth radius in meters
   const rad = (degrees) => (degrees * Math.PI) / 180;
-
   const dLat = rad(coord2.lat - coord1.lat);
   const dLng = rad(coord2.lng - coord1.lng);
-  const a = 
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(rad(coord1.lat)) * Math.cos(rad(coord2.lat)) * 
-    Math.sin(dLng / 2) ** 2;
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(rad(coord1.lat)) * Math.cos(rad(coord2.lat)) * Math.sin(dLng / 2) ** 2;
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
   return R * c; // Distance in meters
 };
 
-const filterInstitutionsByRoute = (institutions, routePoint) => {
-  return institutions.filter((institution) =>
-    calculateDistance(routePoint, {
-      lat: institution.geometry.location.lat,
-      lng: institution.geometry.location.lng,
-    }) <= 50
-  );
+const parseTimeString = (timeStr) => {
+  const hours = parseInt(timeStr.substring(0, 2));
+  const minutes = parseInt(timeStr.substring(2));
+  const now = new Date();
+  const time = new Date(now);
+  time.setHours(hours, minutes, 0, 0);
+  return time;
+};
+
+// Handles cases including midnight crossover
+const isPlaceRelevant = (openingHours) => {
+  if (!openingHours?.periods) return false;
+
+  const now = new Date();
+  const thirtyMinutes = 30 * 60 * 1000;
+  
+  // Find the current period
+  const today = now.getDay();
+  const currentPeriod = openingHours.periods.find(period => {
+    const openDay = period.open?.day;
+    const closeDay = period.close?.day;
+    
+    // Handle cases where the place is open across midnight
+    if (openDay !== undefined && closeDay !== undefined) {
+      if (openDay === closeDay) {
+        return openDay === today;
+      } else {
+        // Handle overnight periods
+        return today === openDay || today === closeDay;
+      }
+    }
+    return false;
+  });
+
+  if (!currentPeriod?.open || !currentPeriod?.close) return false;
+
+  const openTime = parseTimeString(currentPeriod.open.time);
+  const closeTime = parseTimeString(currentPeriod.close.time);
+  
+  // Handle overnight periods
+  if (currentPeriod.open.day !== currentPeriod.close.day) {
+    if (closeTime < openTime) {
+      closeTime.setDate(closeTime.getDate() + 1);
+    }
+  }
+
+  // Check if:
+  // 1. About to open (within next 30 mins)
+  const aboutToOpen = openTime > now && openTime - now <= thirtyMinutes;
+  
+  // 2. About to close (within next 30 mins)
+  const aboutToClose = closeTime > now && closeTime - now <= thirtyMinutes;
+  
+  // 3. Recently closed (within last 30 mins)
+  const recentlyClosed = now > closeTime && now - closeTime <= thirtyMinutes;
+
+  return aboutToOpen || aboutToClose || recentlyClosed;
 };
 
 export const getNearbyPlaceData = async (req, res) => {
   const { routePoints, keyword } = req.body.params;
   const keywords = keyword.split(" ");
   const apiKey = process.env.GOOGLE_MAPS_API_KEY;
-  const radius = 50; // Set radius for Google API request
+  const radius = 100; // 100 meters radius
+  const pointBatchSize = 7;
 
+  const filteredPoints = routePoints.filter((_, index) => index % pointBatchSize === 0);
+  
   try {
     let combinedResults = [];
+    const seenPlaceIds = new Set();
 
-    for (let i = 0; i < routePoints.length; i += 3) {
-      const point = routePoints[i];
-
-      for (let word of keywords) {
+    const apiRequests = filteredPoints.flatMap((point) =>
+      keywords.map(async (word) => {
         let nextPageToken = null;
+        let wordResults = [];
 
         do {
           const response = await axios.get(
@@ -52,28 +100,185 @@ export const getNearbyPlaceData = async (req, res) => {
               },
             }
           );
-          console.log(response);
-          // Filter institutions by the current route point within 50m distance
-          const nearbyInstitutions = filterInstitutionsByRoute(response.data.results, point);
-          combinedResults = [
-            ...combinedResults,
-            ...nearbyInstitutions.filter(
-              (place) => !combinedResults.some((existing) => existing.place_id === place.place_id)
-            ),
-          ];
 
+          // Handle rate limiting
+          if (nextPageToken) {
+            await new Promise(resolve => setTimeout(resolve, 2000)); // Wait for 2 seconds before using nextPageToken
+          }
+
+          const places = response.data.results;
           nextPageToken = response.data.next_page_token || null;
-          if (nextPageToken) await new Promise((resolve) => setTimeout(resolve, 2000));
+
+          // Filter places by distance first
+          const placesInRange = places.filter(place => 
+            calculateDistance(
+              { lat: point.lat, lng: point.lng },
+              { lat: place.geometry.location.lat, lng: place.geometry.location.lng }
+            ) <= radius
+          );
+
+          // Get details only for places in range
+          const placeDetailsRequests = placesInRange.map(async (place) => {
+            if (seenPlaceIds.has(place.place_id)) return null;
+            
+            try {
+              const detailsResponse = await axios.get(
+                `https://maps.googleapis.com/maps/api/place/details/json`,
+                {
+                  params: {
+                    place_id: place.place_id,
+                    fields: "opening_hours",
+                    key: apiKey,
+                  },
+                }
+              );
+
+              const openingHours = detailsResponse.data.result.opening_hours;
+              console.log(openingHours);
+              if (isPlaceRelevant(openingHours)) {
+                seenPlaceIds.add(place.place_id);
+                return place;
+              }
+            } catch (error) {
+              console.error(`Error fetching details for place ${place.place_id}:`, error);
+            }
+            return null;
+          });
+
+          const relevantPlaces = (await Promise.all(placeDetailsRequests)).filter(Boolean);
+          wordResults.push(...relevantPlaces);
         } while (nextPageToken);
-      }
-    }
+
+        return wordResults;
+      })
+    );
+
+    const results = await Promise.all(apiRequests);
+    combinedResults = results.flat();
 
     res.json({ results: combinedResults });
   } catch (error) {
     console.error("Error fetching data from Google API:", error);
-    res.status(500).json({ error: 'Error fetching data from Google API' });
+    res.status(500).json({ error: "Error fetching data from Google API" });
   }
 };
+
+
+
+//v2
+
+// import axios from "axios";
+
+// const calculateDistance = (coord1, coord2) => {
+//   const R = 6371e3; // Earth radius in meters
+//   const rad = (degrees) => (degrees * Math.PI) / 180;
+//   const dLat = rad(coord2.lat - coord1.lat);
+//   const dLng = rad(coord2.lng - coord1.lng);
+//   const a = Math.sin(dLat / 2) ** 2 + Math.cos(rad(coord1.lat)) * Math.cos(rad(coord2.lat)) * Math.sin(dLng / 2) ** 2;
+//   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+//   return R * c; // Distance in meters
+// };
+
+// // Check if place is about to open or close within a 30-minute interval
+// const isPlaceRelevant = (openingHours) => {
+//   if (!openingHours || !openingHours.periods) return false; // Return if no opening hours are available
+
+//   const now = new Date();
+//   const thirtyMinutesInMillis = 30 * 60 * 1000;
+
+//   // Find today's opening hours period (if available)
+//   const todayOpeningHours = openingHours.periods.find(
+//     (period) => period.open && period.close
+//   );
+
+//   if (!todayOpeningHours) return false; // Return if no open/close info is available for today
+
+//   const openingTime = new Date(todayOpeningHours.open.time);
+//   const closingTime = new Date(todayOpeningHours.close.time);
+
+//   return (
+//     (closingTime - now > 0 && closingTime - now <= thirtyMinutesInMillis) || // About to close in 30 mins
+//     (now - closingTime >= 0 && now - closingTime <= thirtyMinutesInMillis) || // Closed less than 30 mins ago
+//     (openingTime - now > 0 && openingTime - now <= thirtyMinutesInMillis) // About to open in 30 mins
+//   );
+// };
+
+
+// export const getNearbyPlaceData = async (req, res) => {
+//   const { routePoints, keyword } = req.body.params;
+//   const keywords = keyword.split(" ");
+//   const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+//   const radius = 100; // Adjusted radius
+//   const pointBatchSize = 7;
+
+//   const filteredPoints = routePoints.filter((_, index) => index % pointBatchSize === 0);
+  
+//   try {
+//     let combinedResults = [];
+//     const apiRequests = filteredPoints.flatMap((point) =>
+//       keywords.map(async (word) => {
+//         let nextPageToken = null;
+//         let wordResults = [];
+
+//         do {
+//           const response = await axios.get(
+//             `https://maps.googleapis.com/maps/api/place/nearbysearch/json`,
+//             {
+//               params: {
+//                 location: `${point.lat},${point.lng}`,
+//                 radius,
+//                 keyword: word,
+//                 key: apiKey,
+//                 pagetoken: nextPageToken,
+//               },
+//             }
+//           );
+
+//           const places = response.data.results;
+//           nextPageToken = response.data.next_page_token || null;
+
+//           // For each place, make a place details request to get the opening hours
+//           const placeDetailsRequests = places.map(async (place) => {
+//             const detailsResponse = await axios.get(
+//               `https://maps.googleapis.com/maps/api/place/details/json`,
+//               {
+//                 params: {
+//                   place_id: place.place_id,
+//                   fields: "opening_hours",
+//                   key: apiKey,
+//                 },
+//               }
+//             );
+
+//             const openingHours = detailsResponse.data.result.opening_hours;
+//             return isPlaceRelevant(openingHours) ? place : null; // Only return if relevant
+//           });
+
+//           // Await all details requests
+//           const relevantPlaces = (await Promise.all(placeDetailsRequests)).filter(Boolean);
+//           wordResults.push(...relevantPlaces);
+
+//           // Avoid adding duplicate places
+//           wordResults = wordResults.filter(
+//             (place, index, self) =>
+//               index === self.findIndex((p) => p.place_id === place.place_id)
+//           );
+//         } while (nextPageToken);
+
+//         return wordResults;
+//       })
+//     );
+
+//     // Await all keyword/place requests
+//     const results = await Promise.all(apiRequests);
+//     combinedResults = results.flat();
+
+//     res.json({ results: combinedResults });
+//   } catch (error) {
+//     console.error("Error fetching data from Google API:", error);
+//     res.status(500).json({ error: "Error fetching data from Google API" });
+//   }
+// };
 
 
 //v1
