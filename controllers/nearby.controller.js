@@ -134,7 +134,6 @@ export const getNearbyPlaceData = async (req, res) => {
               );
 
               const openingHours = detailsResponse.data.result.opening_hours;
-              console.log(openingHours);
               if (isPlaceRelevant(openingHours)) {
                 seenPlaceIds.add(place.place_id);
                 return place;
