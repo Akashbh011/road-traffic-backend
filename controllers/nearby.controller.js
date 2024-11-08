@@ -1,4 +1,115 @@
 import axios from "axios";
+// const Location = require('./models/nearbyHotspot.model.js'); 
+import { hotspotLocation } from '../models/nearbyHotspot.model.js'  // Assuming model file is in models folder
+//-----------------------------
+// nearby hotspots feature : 
+
+export const findNearbyLocations = async (req, res) => {
+  const { latitude, longitude } = req.body; // Retrieve latitude and longitude from request body
+  if (!latitude || !longitude) {
+    return res.status(400).json({ error: "Latitude and longitude are required." });
+  }
+
+  try {
+    // Fetch all locations (if needed)
+    // const allLocations = await hotspotLocation.find({});
+    // console.log("All locations:", allLocations);
+
+    // Check if a specific location exists near the provided latitude and longitude
+    const existingLocation = await hotspotLocation.findOne({ lat: latitude, lng: longitude });
+
+    // console.log("letss gooo !!");
+
+    if (existingLocation) {
+      return res.json({
+        message: "NEARBY TRAFFIC CONGESTION HOTSPOT DETECTED!",
+        info: "Maybe under construction as per MISSION-15",
+        location: existingLocation.location,
+        lat: existingLocation.lat,
+        lng: existingLocation.lng
+      });
+    } else {
+      res.status(404).json({ message: "No nearby location found." });
+    }
+  } catch (error) {
+    console.error("Error fetching locations:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+export const findNearbyHotspots = async (req, res) => {
+  const { latitude, longitude } = req.body;
+  if (!latitude || !longitude) {
+    return res.status(400).json({ error: "Latitude and longitude are required." });
+  }
+
+  const RADIUS = 6371e3; // Earth radius in meters
+
+  // Helper function to calculate the distance between two points using the Haversine formula
+  const computeHaversineDistance = (lat1, lon1, lat2, lon2) => {
+    const toRadians = (degrees) => (degrees * Math.PI) / 180;
+    const dLat = toRadians(lat2 - lat1);
+    const dLon = toRadians(lon2 - lon1);
+
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRadians(lat1)) *
+        Math.cos(toRadians(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return RADIUS * c; // Distance in meters
+  };
+
+  try {
+    // Step 1: Find and remove duplicates based on latitude and longitude
+    // const duplicates = await hotspotLocation.aggregate([
+    //   {
+    //     $group: {
+    //       _id: { lat: "$lat", lng: "$lng" }, // Group by latitude and longitude
+    //       uniqueIds: { $addToSet: "$_id" },   // Collect all IDs of duplicate records
+    //       count: { $sum: 1 }                  // Count duplicates
+    //     }
+    //   },
+    //   {
+    //     $match: {
+    //       count: { $gt: 1 }                   // Filter groups with more than one entry (duplicates)
+    //     }
+    //   }
+    // ]);
+
+    // // Step 2: Delete duplicates, keeping only one entry
+    // for (const record of duplicates) {
+    //   const [keepId, ...removeIds] = record.uniqueIds; // Keep the first ID, remove the rest
+    //   await hotspotLocation.deleteMany({ _id: { $in: removeIds } });
+    // }
+
+    // Fetch all locations after removing duplicates
+    const allLocations = await hotspotLocation.find({});
+
+    // Filter locations within 50 meters
+    const nearbyHotspots = allLocations.filter((location) => {
+      const distance = computeHaversineDistance(latitude, longitude, location.lat, location.lng);
+      return distance <= 50000;
+    });
+
+    if (nearbyHotspots.length > 0) {
+      return res.json({
+        message: "Nearby traffic congestion hotspots detected!",
+        info: "Maybe under construction as per MISSION-15",
+        locations: nearbyHotspots
+      });
+    } else {
+      res.status(404).json({ message: "No nearby location found within 50 meters." });
+    }
+  } catch (error) {
+    console.error("Error fetching locations:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+
 
 const calculateDistance = (coord1, coord2) => {
   const R = 6371e3; // Earth radius in meters

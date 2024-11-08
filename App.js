@@ -38,7 +38,3 @@ app.use("/api/complaint",complaintRoute);
 app.use("/api/event",eventRoute)
 app.use("/api/user",userRoute)
 app.use("/api/nearby",nearbyRoute)
-
-
-// THIS IS THE URL ON WHICH WE ARE GETTING THE JSON DATA FROM PLACES API
-//  https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=18.49968545,73.85688275180982&radius=10000&type=school&key=AIzaSyAs6xHZ_UEGk5IFF2V620vsgnMOoOrqepY
