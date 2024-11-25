@@ -7,6 +7,7 @@ import eventRoute from "./routes/event.route.js"
 import dotenv from "dotenv";
 import userRoute from "./routes/user.route.js"
 import nearbyRoute from "./routes/nearby.route.js"
+import cookieParser from "cookie-parser";
 
 dotenv.config({
     path: './.env'
@@ -20,6 +21,7 @@ app.use(cors({
     credentials: true,              
 }));
 app.use(express.json());
+app.use(cookieParser());
 
 
 connectDB()
