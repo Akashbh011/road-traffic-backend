@@ -5,7 +5,7 @@ import { uploadOnCloudinary } from '../utils/cloudinary.js';
 // Function to handle user registration
 export const registerComplaint = async (req, res) => {
   try {
-    const {  userId,lng , lat , category } = req.body;
+    const {  userId,lng , lat , category, description } = req.body;
 
     const uploadedImage = req.file;
     if (!uploadedImage) {
@@ -21,7 +21,7 @@ export const registerComplaint = async (req, res) => {
 
     console.log("the url of complaint :",cloudurl.secure_url);
 
-    const newComplaint = new Complaint({ user:userId,longitude:lng ,latitude: lat ,src:cloudurl.secure_url,category:category });
+    const newComplaint = new Complaint({ user:userId,longitude:lng ,latitude: lat ,src:cloudurl.secure_url,category:category, description });
     const savedCompaint = await newComplaint.save();
     console.log("New Complaint has been saved !");
     // console.log(savedUser);

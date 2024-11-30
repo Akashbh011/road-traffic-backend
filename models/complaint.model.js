@@ -23,6 +23,10 @@ const { Schema } = mongoose;
             type:String,
             required:true
         },
+        description: {
+            type:String,
+            required:true
+        },
         isresolved:{
             type:Boolean,
             default:false
