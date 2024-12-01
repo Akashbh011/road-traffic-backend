@@ -2,19 +2,43 @@ import { Event } from '../models/event.model.js';
 
 
 export const registerEvent = async (req, res) => {
-    try {
-        const {  userId,lng , lat , category, startTime, endTime } = req.body;
-    
-        const newEvent = new Event({ user:userId,longitude:lng ,latitude: lat ,category:category, startTime:startTime, endTime:endTime});
-        const savedEvent = await newEvent.save();
-        console.log("New Event has been saved !");
-    
-        res.status(201).json(savedEvent);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error registering Event' });
+  try {
+    const { userId, category, startTime, endTime, location } = req.body;
+
+    if (!location || !location.type || !location.coordinates) {
+      return res.status(400).json({ message: "Invalid location data." });
     }
+
+    let formattedCoordinates;
+    if (location.type === "Point") {
+      formattedCoordinates = location.coordinates.map(coord => Number(coord));
+    } else if (location.type === "LineString") {
+      formattedCoordinates = location.coordinates.map(coord => 
+        coord.map(num => Number(num))
+      );
+    }
+
+
+    const newEvent = new Event({
+      user: userId,
+      category,
+      startTime,
+      endTime,
+      location: {
+        type: location.type,
+        coordinates: formattedCoordinates
+      }
+    });
+
+    const savedEvent = await newEvent.save();
+    res.status(201).json(savedEvent);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error registering Event: " + error.message });
+  }
 };
+
+
 
 export const getEventDatamodel = async (req, res) => {
     try {

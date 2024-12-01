@@ -1,6 +1,7 @@
+
+import { hotspotLocation } from '../models/nearbyHotspot.model.js' 
 import axios from "axios";
 
-import { hotspotLocation } from '../models/nearbyHotspot.model.js'  
 
 export const getNearbySpots = async (req, res) => {
   const { routePoints } = req.body.params;
@@ -32,8 +33,6 @@ export const getNearbySpots = async (req, res) => {
     res.status(500).json({ error: "Error fetching nearby traffic spots" });
   }
 };
-
-
 
 const calculateDistance = (coord1, coord2) => {
   const R = 6371e3; // Earth radius in meters
@@ -204,6 +203,7 @@ export const getNearbyPlaceData = async (req, res) => {
     res.status(500).json({ error: "Error fetching data from Google API" });
   }
 };
+
 
 
 
