@@ -1,4 +1,4 @@
-import { Hospital } from "../models/Hospital.model.js";
+import { Hospital } from "../models/hospital.model.js";
 
 
 
