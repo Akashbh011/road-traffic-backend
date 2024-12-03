@@ -1,6 +1,5 @@
+import { Garden } from "../models/garden.model.js";
 
-
-import { Garden } from "../models/Garden.model.js";
 
 
 export const createGarden = async (req, res) => {
