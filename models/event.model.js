@@ -44,6 +44,8 @@ const eventSchema = new mongoose.Schema({
     category: { type: String, required: true },
     startTime: { type: Date, required: true },
     endTime: { type: Date, required: true },
+    crowd: { type: Number, required: true },
+    vehicleCount: {type: Number, required: true },
     location: {
       type: {
         type: String,

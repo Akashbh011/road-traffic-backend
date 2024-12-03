@@ -3,15 +3,18 @@ const { Schema } = mongoose;
 
 const constructionSchema = new Schema(
   {
-    type: {
-      type: String,
-      enum: ['metro', 'flyover'], 
-      required: true
-    },
-    name: {
-      type: String,
-      required: true
-    },
+      projectName:{
+            type:String,
+            required:true
+      },
+        vendorName:{
+            type:String,
+            required:true
+        },
+        startTime: { 
+            type: Date, 
+            required: true 
+        },
     polyline: [  
       {
         lat: {
