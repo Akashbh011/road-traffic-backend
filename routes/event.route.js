@@ -4,6 +4,6 @@ import { registerEvent,getEventDatamodel } from '../controllers/event.controller
 import { verifyToken } from '../middlewares/verifyToken.js';
 
 
-router.post('/',verifyToken,registerEvent); 
+router.post('/',registerEvent); 
 router.get('/getEventData',verifyToken,getEventDatamodel); 
 export default router;

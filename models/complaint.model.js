@@ -2,11 +2,6 @@ import mongoose from 'mongoose'; // Import mongoose as the default export
 const { Schema } = mongoose;
  const complaintSchema=new Schema(
     {
-        
-        user:{
-            type:Schema.Types.ObjectId,
-            ref:"User"
-        },
         longitude:{
             type:String,
             required:true
@@ -17,7 +12,6 @@ const { Schema } = mongoose;
         },
         src:{
             type:String,
-            required:true
         },
         category:{
             type:String,

@@ -3,43 +3,43 @@ import mongoose from 'mongoose';
 const schoolSchema = new mongoose.Schema({
 
     latitude: {
-        type: String, // Latitude as string to handle precision
+        type: String, 
         required: true
     },
 
     longitude: {
-        type: String, // Longitude as string to handle precision
+        type: String, 
         required: true
     },
 
     schoolName: {
-        type: String, // School name
+        type: String,
         required: true
     },
 
     startTime: {
-        type: Date, // Start time in HH:MM format
+        type: Date, 
         required: true
     },
 
     endTime: {
-        type: String, // End time in HH:MM format
+        type: String, 
         required: true
     },
 
     numberOfSchoolBuses: {
-        type: Number, // Number of school buses
+        type: Number, 
         required: true,
-        min: 0 // Minimum value is 0
+        min: 0 
     },
 
     numberOfStudents: {
-        type: Number, // Number of students
+        type: Number, 
         required: true,
-        min: 0 // Minimum value is 0
+        min: 0 
     }
 
-}, { timestamps: true }); // Automatically adds createdAt and updatedAt fields
+}, { timestamps: true }); 
 
 
 export const School = mongoose.model('School', schoolSchema);

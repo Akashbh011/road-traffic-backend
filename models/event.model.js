@@ -40,7 +40,6 @@ import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 const eventSchema = new mongoose.Schema({
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     category: { type: String, required: true },
     startTime: { type: Date, required: true },
     endTime: { type: Date, required: true },

@@ -3,7 +3,7 @@ import { Event } from '../models/event.model.js';
 
 export const registerEvent = async (req, res) => {
   try {
-    const { userId, category, startTime, endTime, location } = req.body;
+    const { category, startTime, endTime, location } = req.body;
 
     if (!location || !location.type || !location.coordinates) {
       return res.status(400).json({ message: "Invalid location data." });
@@ -20,7 +20,6 @@ export const registerEvent = async (req, res) => {
 
 
     const newEvent = new Event({
-      user: userId,
       category,
       startTime,
       endTime,

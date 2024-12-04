@@ -3,18 +3,18 @@ import mongoose from 'mongoose';
 // Define the schema
 const trafficHotspotSchema = new mongoose.Schema({
     latitude: {
-        type: String, // Latitude of the hotspot
+        type: String,
         required: true
     },
     longitude: {
-        type: String, // Longitude of the hotspot
+        type: String, 
         required: true
     },
     landmark: {
-        type: String, // Nearby landmark for identification
+        type: String, 
         required: true
     }
-}, { timestamps: true }); // Automatically adds createdAt and updatedAt fields
+}, { timestamps: true }); 
 
 // Create the model
 export const TrafficHotspot = mongoose.model('TrafficHotspot', trafficHotspotSchema);

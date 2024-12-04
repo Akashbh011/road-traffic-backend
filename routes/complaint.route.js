@@ -6,6 +6,6 @@ import { verifyToken } from '../middlewares/verifyToken.js';
 const router = express.Router();
 
 // Define the route for user registration
-router.post('/',verifyToken,upload.single('image'),registerComplaint); // Assuming your registration handler is named `registerUser`
+router.post('/',upload.single('image'),registerComplaint); // Assuming your registration handler is named `registerUser`
 router.get('/getComplaintData',verifyToken,getComplaintDatamodel); 
 export default router;

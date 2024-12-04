@@ -5,11 +5,15 @@ import { uploadOnCloudinary } from '../utils/cloudinary.js';
 // Function to handle user registration
 export const registerComplaint = async (req, res) => {
   try {
-    const {  userId,lng , lat , category, description } = req.body;
+    const {  lng , lat , category, description } = req.body;
 
     const uploadedImage = req.file;
     if (!uploadedImage) {
-      return res.status(400).json({ error: 'No file uploaded' });
+      const newComplaintnoImg  = new Complaint({longitude:lng ,latitude: lat ,src:"",category:category, description });
+      const savedCompaintnoImg = await newComplaintnoImg.save();
+      console.log("New Complaint has been saved !");
+      res.status(201).json(savedCompaintnoImg);
+      return;
     }
   
     const cloudurl = await uploadOnCloudinary(uploadedImage.path)
@@ -21,10 +25,9 @@ export const registerComplaint = async (req, res) => {
 
     console.log("the url of complaint :",cloudurl.secure_url);
 
-    const newComplaint = new Complaint({ user:userId,longitude:lng ,latitude: lat ,src:cloudurl.secure_url,category:category, description });
+    const newComplaint = new Complaint({longitude:lng ,latitude: lat ,src:cloudurl.secure_url,category:category, description });
     const savedCompaint = await newComplaint.save();
     console.log("New Complaint has been saved !");
-    // console.log(savedUser);
 
     res.status(201).json(savedCompaint);
   } catch (error) {

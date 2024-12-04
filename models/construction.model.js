@@ -15,18 +15,18 @@ const constructionSchema = new Schema(
             type: Date, 
             required: true 
         },
-    polyline: [  
-      {
-        lat: {
-          type: Number,
-          required: true
-        },
-        long: {
-          type: Number,
-          required: true
-        }
-      }
-    ],
+        coordinates: {
+            type: Array,
+            required: true,
+            validate: {
+            validator: function(v) {
+                          return Array.isArray(v) && v.length >= 2 &&
+                                 v.every(coord => Array.isArray(coord) && 
+                                 coord.length === 2 && 
+                                 !isNaN(coord[0]) && !isNaN(coord[1]));
+                        },
+            }
+      },
     startDate: {
       type: Date,
       required: true
@@ -42,7 +42,7 @@ const constructionSchema = new Schema(
     }
   },
   {
-    timestamps: true  // Automatically adds createdAt and updatedAt fields
+    timestamps: true 
   }
 );
 
