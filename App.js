@@ -19,6 +19,7 @@ import traffichotspotRoute from "./routes/traffichotspot.route.js"
 import hotelRoute from "./routes/hotel.route.js"
 
 
+
 import cookieParser from "cookie-parser";
 
 

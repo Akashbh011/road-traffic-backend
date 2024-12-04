@@ -25,3 +25,24 @@ export const createTrafficHotspot = async (req, res) => {
         });
     }
 };
+
+
+// Controller function to fetch all traffic hotspot entries
+export const getAllTrafficHotspots = async (req, res) => {
+    try {
+        // Fetch all traffic hotspot documents from the database
+        const hotspots = await TrafficHotspot.find({});
+        
+        // Send a successful response with the data
+        res.status(200).json({
+            message: 'Traffic hotspots fetched successfully!',
+            data: hotspots
+        });
+    } catch (error) {
+        // Send an error response with the error message
+        res.status(500).json({
+            message: 'Error fetching traffic hotspots.',
+            error: error.message
+        });
+    }
+};

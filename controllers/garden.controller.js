@@ -61,3 +61,23 @@ export const createGarden = async (req, res) => {
     }
 
 };
+
+
+export const getAllGardens = async (req, res) => {
+    try {
+        // Fetch all garden documents from the database
+        const gardens = await Garden.find({});
+        
+        // Send a successful response with the data
+        res.status(200).json({
+            message: 'Gardens fetched successfully!',
+            data: gardens
+        });
+    } catch (error) {
+        // Send an error response with the error message
+        res.status(500).json({
+            message: 'Error fetching gardens.',
+            error: error.message
+        });
+    }
+};

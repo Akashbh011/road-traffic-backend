@@ -69,3 +69,23 @@ export const createConstructionProject = async (req, res) => {
     }
 
 };
+
+
+export const getAllConstructionProjects = async (req, res) => {
+    try {
+        // Fetch all construction project documents
+        const constructionProjects = await Construction.find({});
+        
+        // Send a successful response with the data
+        res.status(200).json({
+            message: 'Construction projects fetched successfully!',
+            data: constructionProjects
+        });
+    } catch (error) {
+        // Send an error response with the error message
+        res.status(500).json({
+            message: 'Error fetching construction projects.',
+            error: error.message
+        });
+    }
+};
