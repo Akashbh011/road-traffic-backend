@@ -4,12 +4,13 @@ import { uploadOnCloudinary } from '../utils/cloudinary.js';
 
 // Function to handle user registration
 export const registerComplaint = async (req, res) => {
+  console.log("Hi");
   try {
-    const {  lng , lat , category, description } = req.body;
-
+    const {  lng, lat , category, description } = req.body;
+   
     const uploadedImage = req.file;
     if (!uploadedImage) {
-      const newComplaintnoImg  = new Complaint({longitude:lng ,latitude: lat ,src:"",category:category, description });
+      const newComplaintnoImg  = new Complaint({longitude:longitude ,latitude: latitude ,src:"",category:category, description });
       const savedCompaintnoImg = await newComplaintnoImg.save();
       console.log("New Complaint has been saved !");
       res.status(201).json(savedCompaintnoImg);
