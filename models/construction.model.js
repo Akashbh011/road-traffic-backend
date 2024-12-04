@@ -11,10 +11,6 @@ const constructionSchema = new Schema(
             type:String,
             required:true
         },
-        startTime: { 
-            type: Date, 
-            required: true 
-        },
         coordinates: {
             type: Array,
             required: true,
