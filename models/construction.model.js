@@ -12,17 +12,26 @@ const constructionSchema = new Schema(
             required:true
         },
         coordinates: {
-            type: Array,
-            required: true,
-            validate: {
-            validator: function(v) {
-                          return Array.isArray(v) && v.length >= 2 &&
-                                 v.every(coord => Array.isArray(coord) && 
-                                 coord.length === 2 && 
-                                 !isNaN(coord[0]) && !isNaN(coord[1]));
-                        },
-            }
-      },
+  type: Array,
+  required: true,
+  validate: {
+    validator: function (v) {
+      return (
+        Array.isArray(v) &&
+        v.length >= 2 &&
+        v.every(
+          (coord) =>
+            Array.isArray(coord) &&
+            coord.length === 2 &&
+            !isNaN(coord[0]) &&
+            !isNaN(coord[1])
+        )
+      );
+    },
+    message: "Coordinates must be an array of at least two valid [lng, lat] points.",
+  },
+},
+
     startDate: {
       type: Date,
       required: true
