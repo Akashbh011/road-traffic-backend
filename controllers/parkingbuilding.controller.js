@@ -31,3 +31,23 @@ export const createParkingBuilding = async (req, res) => {
         });
     }
 };
+
+
+export const getAllParkingBuildings = async (req, res) => {
+    try {
+        // Fetch all parking building documents from the database
+        const parkingBuildings = await ParkingBuilding.find({});
+        
+        // Send a successful response with the data
+        res.status(200).json({
+            message: 'Parking buildings fetched successfully!',
+            data: parkingBuildings
+        });
+    } catch (error) {
+        // Send an error response with the error message
+        res.status(500).json({
+            message: 'Error fetching parking buildings.',
+            error: error.message
+        });
+    }
+};

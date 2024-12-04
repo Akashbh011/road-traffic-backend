@@ -1,9 +1,10 @@
 import express from 'express';
-import { ParkingBuilding } from '../models/parkingbuilding.model.js';
+import { createParkingBuilding,getAllParkingBuildings } from '../controllers/parkingbuilding.controller.js';
 
 
 const router = express.Router();
 
-router.post('/', ParkingBuilding);
+router.post('/', createParkingBuilding);
+router.post('/getAllParkingBuildings', getAllParkingBuildings);
 
 export default router;

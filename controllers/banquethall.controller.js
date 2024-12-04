@@ -36,3 +36,14 @@ import { BanquetHall } from "../models/banquethall.model.js";
     }
  }
  
+ export const getAllBanquetHalls = async (req, res) => {
+    try {
+        console.log("Fetching all banquet halls!");
+        // Fetch all banquet hall documents
+        const banquetHalls = await BanquetHall.find({});
+        res.json(banquetHalls); // Send the fetched banquet halls as a response
+    } catch (error) {
+        console.error(error); // Log the error to the console
+        res.status(500).json({ message: 'Error fetching banquet halls', error: error.message });
+    }
+};

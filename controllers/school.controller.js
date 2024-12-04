@@ -30,3 +30,23 @@ export const createSchool = async (req, res) => {
         });
     }
 };
+
+
+export const getAllSchools = async (req, res) => {
+    try {
+        // Fetch all school documents from the database
+        const schools = await School.find({});
+        
+        // Send a successful response with the data
+        res.status(200).json({
+            message: 'Schools fetched successfully!',
+            data: schools
+        });
+    } catch (error) {
+        // Send an error response with the error message
+        res.status(500).json({
+            message: 'Error fetching schools.',
+            error: error.message
+        });
+    }
+};

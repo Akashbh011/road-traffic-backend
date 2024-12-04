@@ -56,3 +56,23 @@ export const createMall = async (req, res) => {
     }
 
 };
+
+
+export const getAllMalls = async (req, res) => {
+    try {
+        // Fetch all mall documents from the database
+        const malls = await Mall.find({});
+        
+        // Send a successful response with the data
+        res.status(200).json({
+            message: 'Malls fetched successfully!',
+            data: malls
+        });
+    } catch (error) {
+        // Send an error response with the error message
+        res.status(500).json({
+            message: 'Error fetching malls.',
+            error: error.message
+        });
+    }
+};
