@@ -4,7 +4,6 @@ import { uploadOnCloudinary } from '../utils/cloudinary.js';
 
 // Function to handle user registration
 export const registerComplaint = async (req, res) => {
-  console.log("Hi");
   try {
     const {  lng, lat , category, description } = req.body;
    
@@ -18,6 +17,7 @@ export const registerComplaint = async (req, res) => {
     }
   
     const cloudurl = await uploadOnCloudinary(uploadedImage.path)
+    console.log(cloudurl);
 
       // await User.updateOne(
       //   { _id: userId }, 
