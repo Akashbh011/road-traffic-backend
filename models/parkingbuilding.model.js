@@ -26,4 +26,4 @@ const { Schema } = mongoose;
     }
 )
 
-export const ParkingBuilding=mongoose.model("Parkingbuilding", parkingBuildingSchema);
+export const ParkingBuilding=mongoose.model("ParkingBuilding", parkingBuildingSchema);
