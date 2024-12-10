@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'; // Import mongoose as the default export
+import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
 const userSchema = new Schema(
@@ -14,12 +14,12 @@ const userSchema = new Schema(
     password: {
       type: String,
       required: true,
-      minlength: 6, // Minimum length for security
+      minlength: 6, 
     },
     mobile_number: {
       type: String,
       required: true,
-      unique: true, // Ensure phone numbers are unique
+      unique: true,
     }, 
     citizen_score:{
       type:Number,
@@ -31,7 +31,7 @@ const userSchema = new Schema(
     }
   },
   {
-    timestamps: true, // Automatically manage createdAt and updatedAt fields
+    timestamps: true, 
   }
 );
 

@@ -3,19 +3,31 @@ import { Event } from '../models/event.model.js';
 
 export const registerEvent = async (req, res) => {
   try {
-    const { category, startTime, endTime, location, vehicleCount, crowd } = req.body;
 
-    if (!location || !location.type || !location.coordinates) {
-      return res.status(400).json({ message: "Invalid location data." });
+    const {
+      category,
+      startTime,
+      endTime,
+      vehicleCount,
+      crowd,
+      eventPoints,
+    } = req.body;
+
+    if (!Array.isArray(eventPoints) || eventPoints.length === 0) {
+      return res.status(400).json({
+        message: 'Event points must be a non-empty array of lat-lng objects.',
+      });
     }
 
-    let formattedCoordinates;
-    if (location.type === "Point") {
-      formattedCoordinates = location.coordinates.map(coord => Number(coord));
-    } else if (location.type === "LineString") {
-      formattedCoordinates = location.coordinates.map(coord => 
-        coord.map(num => Number(num))
-      );
+    for (const point of eventPoints) {
+      if (
+        typeof point.lat !== 'number' ||
+        typeof point.lng !== 'number'
+      ) {
+        return res.status(400).json({
+          message: 'Each event point must contain valid "lat" and "lng" as numbers.',
+        });
+      }
     }
 
 
@@ -25,14 +37,14 @@ export const registerEvent = async (req, res) => {
       endTime,
       vehicleCount,
       crowd,
-      location: {
-        type: location.type,
-        coordinates: formattedCoordinates
-      }
+      eventPoints,
     });
 
     const savedEvent = await newEvent.save();
-    res.status(201).json(savedEvent);
+    res.status(201).json({
+      message: 'Event created successfully!',
+      data: savedEvent,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error registering Event: " + error.message });

@@ -1,41 +1,45 @@
-import mongoose from 'mongoose'; // Import mongoose as the default export
+import mongoose from 'mongoose'; 
 const { Schema } = mongoose;
 
- const diversionSchema=new Schema(
-    {     
-        projectName:{
-            type:String,
-            required:true
-        },
-        vendorName:{
-            type:String,
-            required:true
-        },
-        startTime: { 
-            type: Date, 
-            required: true 
-        },
-        endTime: { 
-            type: Date, 
-            required: true 
-        },
-        longitude:{
-            type:String,
-            required:true
-        },
-        latitude:{
-            type:String,
-            required:true
-        },
-        type:{
-            type:String,
-            enum: ['Metro-construction', 'Road-construction','Flyover-construction'],
-            required:true
-        },
+const diversionSchema = new Schema(
+  {
+    projectName: {
+      type: String,
+      required: true,
     },
-    {
-        timestamps:true
-    }
-)
+    vendorName: {
+      type: String,
+      required: true,
+    },
+    startDate: {
+      type: Date,
+      required: true,
+    },
+    endDate: {
+      type: Date,
+      required: true,
+    },
+    diversionPoints: [
+      {
+        lat: {
+          type: Number, 
+          required: true,
+        },
+        lng: {
+          type: Number, 
+          required: true,
+        },
+      },
+    ],
+    type: {
+      type: String,
+      enum: ['Metro-construction', 'Road-construction', 'Flyover-construction'],
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-export const Diversion=mongoose.model("Diversion",diversionSchema);
+export const Diversion = mongoose.model('Diversion', diversionSchema);

@@ -4,34 +4,30 @@ const { Schema } = mongoose;
 const constructionSchema = new Schema(
   {
       projectName:{
-            type:String,
-            required:true
+        type:String,
+        required:true
       },
-        vendorName:{
-            type:String,
-            required:true
+      vendorName:{
+        type:String,
+        required:true
+      },
+      type:{
+        type: String,
+        enum: ['Metro-construction', 'Road-construction', 'Flyover-construction'],
+        required: true,
+      },
+      constructionPoints: [
+      {
+        lat: {
+          type: Number, 
+          required: true,
         },
-        coordinates: {
-  type: Array,
-  required: true,
-  validate: {
-    validator: function (v) {
-      return (
-        Array.isArray(v) &&
-        v.length >= 2 &&
-        v.every(
-          (coord) =>
-            Array.isArray(coord) &&
-            coord.length === 2 &&
-            !isNaN(coord[0]) &&
-            !isNaN(coord[1])
-        )
-      );
-    },
-    message: "Coordinates must be an array of at least two valid [lng, lat] points.",
-  },
-},
-
+        lng: {
+          type: Number, 
+          required: true,
+        },
+      },
+      ], 
     startDate: {
       type: Date,
       required: true

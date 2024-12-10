@@ -5,33 +5,52 @@ import { Construction } from "../models/construction.model.js";
 
 export const createConstructionProject = async (req, res) => {
     try {
-      const { projectName, vendorName, coordinates, startDate, expectedEndDate, status } = req.body;
+      const {
+        projectName,
+        vendorName,
+        type,
+        constructionPoints,
+        startDate,
+        expectedEndDate,
+        status
+      } = req.body;
+
+      console.log(projectName+" "+vendorName+" "+type+" "+constructionPoints+" "+startDate+" "+expectedEndDate+" "+status);
   
-      if (!projectName || !vendorName || !startDate || !expectedEndDate || !status || !coordinates) {
-        throw new Error("All fields are required, including coordinates.");
+      if (!Array.isArray(constructionPoints) || constructionPoints.length === 0) {
+        return res.status(400).json({
+          message: 'Construction points must be a non-empty array of lat-lng objects.',
+        });
       }
   
-      if (!Array.isArray(coordinates) || coordinates.length < 2) {
-        throw new Error("Coordinates must be an array of at least two points in [lng, lat] format.");
-      }
-      
-      coordinates.forEach((point, index) => {
-        if (!Array.isArray(point) || point.length !== 2 || isNaN(point[0]) || isNaN(point[1])) {
-          throw new Error(`Coordinate at index ${index} must be a valid [lng, lat] array.`);
+      // Validate each point in the diversionPoints array
+      for (const point of constructionPoints) {
+        if (
+          typeof point.lat !== 'number' ||
+          typeof point.lng !== 'number'
+        ) {
+          return res.status(400).json({
+            message: 'Each construction point must contain valid "lat" and "lng" as numbers.',
+          });
         }
-      });
+      }
+
+      console.log("hi");
       
   
       const newConstruction = new Construction({
         projectName,
         vendorName,
-        coordinates, // Save polyline as coordinates in the DB
+        type,
+        constructionPoints,
         startDate,
         expectedEndDate,
         status,
       });
+
   
       const savedConstruction = await newConstruction.save();
+
   
       res.status(201).json({
         message: "Construction project created successfully!",

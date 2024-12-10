@@ -3,76 +3,60 @@ import { Diversion } from "../models/diversion.model.js";
 
 
 export const createDiversion = async (req, res) => {
-
     try {
-
-        const {
-
-            projectName,
-
-            vendorName,
-
-            startTime,
-
-            endTime,
-
-            longitude,
-
-            latitude,
-
-            type
-
-        } = req.body;
-
-
-
-        // Validate input and create the diversion document
-
-        const newDiversion = new Diversion({
-
-            projectName,
-
-            vendorName,
-
-            startTime,
-
-            endTime,
-
-            longitude,
-
-            latitude,
-
-            type
-
+      const {
+        projectName,
+        vendorName,
+        startDate,
+        endDate,
+        diversionPoints, 
+        type,
+      } = req.body;
+  
+      // Validate the input fields
+      if (!Array.isArray(diversionPoints) || diversionPoints.length === 0) {
+        return res.status(400).json({
+          message: 'Diversion points must be a non-empty array of lat-lng objects.',
         });
+      }
+  
+      // Validate each point in the diversionPoints array
+      for (const point of diversionPoints) {
+        if (
+          typeof point.lat !== 'number' ||
+          typeof point.lng !== 'number'
+        ) {
+          return res.status(400).json({
+            message: 'Each diversion point must contain valid "lat" and "lng" as numbers.',
+          });
+        }
+      }
+  
+      // Create the diversion document
+      const newDiversion = new Diversion({
+        projectName,
+        vendorName,
+        startDate,
+        endDate,
+        diversionPoints,
+        type,
+      });
+  
 
-
-
-        // Save the new diversion to the database
-
-        const savedDiversion = await newDiversion.save();
-
-        res.status(201).json({
-
-            message: 'Diversion created successfully!',
-
-            data: savedDiversion
-
-        });
-
+      const savedDiversion = await newDiversion.save();
+  
+      res.status(201).json({
+        message: 'Diversion created successfully!',
+        data: savedDiversion,
+      });
     } catch (error) {
-
-        res.status(400).json({
-
-            message: 'Error creating diversion.',
-
-            error: error.message
-
-        });
-
+      res.status(400).json({
+        message: 'Error creating diversion.',
+        error: error.message,
+      });
     }
-
-};
+  };
+  
 
 
 
