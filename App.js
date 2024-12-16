@@ -17,7 +17,7 @@ import parkingbuildingRoute from "./routes/parkingbuilding.route.js"
 import schoolRoute from "./routes/school.route.js"
 import traffichotspotRoute from "./routes/traffichotspot.route.js"
 import hotelRoute from "./routes/hotel.route.js"
-
+import PathInfoRoute from "./routes/pathinfo.route.js";
 
 
 import cookieParser from "cookie-parser";
@@ -31,7 +31,7 @@ import cors from "cors" ;
 const app = express();
 const PORT = process.env.PORT || 3001;
 app.use(cors({
-    origin: process.env.CORS_ORIGIN, 
+    origin:'http://localhost:5173', 
     credentials: true,              
 }));
 app.use(express.json());
@@ -64,3 +64,4 @@ app.use("/api/mall", mallRoute);
 app.use("/api/parkingbuilding", parkingbuildingRoute);
 app.use("/api/school", schoolRoute);
 app.use("/api/traffichotspot", traffichotspotRoute);
+app.use("/api/path-info",PathInfoRoute);

@@ -4,7 +4,7 @@ import { createTrafficHotspot ,getAllTrafficHotspots} from '../controllers/traff
 const router = express.Router();
 
 router.post('/',createTrafficHotspot);
-router.post('/getAllTrafficHotspots',getAllTrafficHotspots);
+router.get('/getAllTrafficHotspots',getAllTrafficHotspots);
 
 
 export default router;

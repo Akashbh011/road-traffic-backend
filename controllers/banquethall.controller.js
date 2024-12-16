@@ -47,3 +47,22 @@ import { BanquetHall } from "../models/banquethall.model.js";
         res.status(500).json({ message: 'Error fetching banquet halls', error: error.message });
     }
 };
+
+export const getAllBanquetHallsByTime = async (req, res) => {
+    try {
+        console.log("Fetching banquet halls with ongoing events!");
+
+
+        const currentTime = new Date();
+
+        const ongoingBanquetHalls = await BanquetHall.find({
+            eventStartTime: { $lte: currentTime },
+            eventEndTime: { $gte: currentTime }
+        });
+
+        res.status(200).json(ongoingBanquetHalls);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error fetching ongoing banquet halls', error: error.message });
+    }
+};

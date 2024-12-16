@@ -39,10 +39,7 @@ export const getAllParkingBuildings = async (req, res) => {
         const parkingBuildings = await ParkingBuilding.find({});
         
         // Send a successful response with the data
-        res.status(200).json({
-            message: 'Parking buildings fetched successfully!',
-            data: parkingBuildings
-        });
+        res.status(200).json(parkingBuildings);
     } catch (error) {
         // Send an error response with the error message
         res.status(500).json({

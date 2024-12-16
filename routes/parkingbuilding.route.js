@@ -5,6 +5,6 @@ import { createParkingBuilding,getAllParkingBuildings } from '../controllers/par
 const router = express.Router();
 
 router.post('/', createParkingBuilding);
-router.post('/getAllParkingBuildings', getAllParkingBuildings);
+router.get('/getAllParkingBuildings', getAllParkingBuildings);
 
 export default router;

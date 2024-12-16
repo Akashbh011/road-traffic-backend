@@ -1,9 +1,9 @@
 import express from 'express';
-import { createBanquetHall , getAllBanquetHalls } from '../controllers/banquethall.controller.js';
+import { createBanquetHall , getAllBanquetHalls, getAllBanquetHallsByTime } from '../controllers/banquethall.controller.js';
 
 const router = express.Router();
 
 router.post('/',createBanquetHall);
-router.post('/getAllBanquetHalls',getAllBanquetHalls);
-
+router.get('/getAllBanquetHalls',getAllBanquetHalls);
+router.get('/getAllBanquetHallsByTime',getAllBanquetHallsByTime);
 export default router;

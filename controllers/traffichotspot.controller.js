@@ -34,10 +34,7 @@ export const getAllTrafficHotspots = async (req, res) => {
         const hotspots = await TrafficHotspot.find({});
         
         // Send a successful response with the data
-        res.status(200).json({
-            message: 'Traffic hotspots fetched successfully!',
-            data: hotspots
-        });
+        res.status(200).json(hotspots);
     } catch (error) {
         // Send an error response with the error message
         res.status(500).json({

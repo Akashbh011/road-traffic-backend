@@ -1,9 +1,10 @@
 import express from 'express';
-import { createSchool,getAllSchools } from '../controllers/school.controller.js';
+import { createSchool,getAllSchools, getAllSchoolsByTime } from '../controllers/school.controller.js';
 
 const router = express.Router();
 
 router.post('/',createSchool);
-router.post('/getAllSchools',getAllSchools);
+router.get('/getAllSchools',getAllSchools);
+router.get('/getAllSchoolsByTime',getAllSchoolsByTime);
 
 export default router;

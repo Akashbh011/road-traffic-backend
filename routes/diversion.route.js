@@ -5,5 +5,5 @@ import { createDiversion , getAllDiversions} from '../controllers/diversion.cont
 const router = express.Router();
 
 router.post('/',createDiversion);
-router.post('/getAllDiversions',getAllDiversions);
+router.get('/getAllDiversions',getAllDiversions);
 export default router;

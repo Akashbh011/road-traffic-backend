@@ -64,10 +64,7 @@ export const getAllMalls = async (req, res) => {
         const malls = await Mall.find({});
         
         // Send a successful response with the data
-        res.status(200).json({
-            message: 'Malls fetched successfully!',
-            data: malls
-        });
+        res.status(200).json(malls);
     } catch (error) {
         // Send an error response with the error message
         res.status(500).json({

@@ -5,5 +5,5 @@ import { createConstructionProject,getAllConstructionProjects } from '../control
 const router = express.Router();
 
 router.post('/',createConstructionProject);
-router.post('/getAllConstructionProjects',getAllConstructionProjects);
+router.get('/getAllConstructionProjects',getAllConstructionProjects);
 export default router;

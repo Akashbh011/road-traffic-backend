@@ -35,10 +35,7 @@ export const getAllHospitals = async (req, res) => {
         const hospitals = await Hospital.find({});
         
         // Send a successful response with the data
-        res.status(200).json({
-            message: 'Hospitals fetched successfully',
-            data: hospitals
-        });
+        res.status(200).json(hospitals);
     } catch (error) {
         // Send an error response with the error message
         res.status(500).json({

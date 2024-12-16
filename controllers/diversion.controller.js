@@ -66,10 +66,7 @@ export const getAllDiversions = async (req, res) => {
         const diversions = await Diversion.find({});
         
         // Send a successful response with the data
-        res.status(200).json({
-            message: 'Diversions fetched successfully!',
-            data: diversions
-        });
+        res.status(200).json(diversions);
     } catch (error) {
         // Send an error response with the error message
         res.status(500).json({

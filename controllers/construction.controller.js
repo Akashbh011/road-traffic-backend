@@ -71,10 +71,7 @@ export const getAllConstructionProjects = async (req, res) => {
         const constructionProjects = await Construction.find({});
         
         // Send a successful response with the data
-        res.status(200).json({
-            message: 'Construction projects fetched successfully!',
-            data: constructionProjects
-        });
+        res.status(200).json(constructionProjects);
     } catch (error) {
         // Send an error response with the error message
         res.status(500).json({
