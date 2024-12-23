@@ -69,9 +69,58 @@ export const addPathInfo = async (req, res) => {
     res.status(500).json({ message: 'Server error. Please try again later.' });
 
   }
-
 };
 
+
+export const getLast8DaysDataForAllPaths = async (req, res) => {
+  try {
+    const { timeRange } = req.query;
+
+    if (!timeRange) {
+      return res.status(400).json({ message: 'Time Range is required.' });
+    }
+
+    const currentDate = new Date(new Date().toISOString().split('T')[0]);
+    currentDate.setDate(currentDate.getDate() - 1);
+    const startDate = new Date(currentDate);
+    startDate.setDate(currentDate.getDate() - 7);
+
+    const paths = ['Katraj-Kondhwa', 'Swargate-Katraj', 'Kothrud-Shivajinagar'];
+    const data = {};
+
+    // Fetch data for each path
+    for (const pathId of paths) {
+      const pathData = await PathInfo.find({
+        pathId,
+        timeRange,
+        date: { $gte: startDate, $lte: currentDate },
+      }).sort({ date: 1 });
+
+      data[pathId] = pathData.map(entry => ({
+        date: entry.date.toISOString().split('T')[0],
+        score: entry.score,
+      }));
+    }
+
+    // Structure response for triple line graph
+    const responseData = {
+      labels: data[paths[0]].map(entry => entry.date), // Dates are common across paths
+      datasets: paths.map((pathId, index) => ({
+        label: pathId,
+        data: data[pathId].map(entry => entry.score),
+        borderColor: index === 0 ? 'red' : index === 1 ? 'blue' : 'green',
+        borderWidth: 2,
+        fill: false,
+      })),
+    };
+
+    res.status(200).json({ message: 'Data for all paths retrieved successfully.', data: responseData });
+    console.log("Data for all paths sent to frontend");
+  } catch (error) {
+    console.error("Error fetching last 8 days data for all paths:", error);
+    res.status(500).json({ message: 'Server error. Please try again later.' });
+  }
+};
 
 
 
@@ -79,99 +128,68 @@ export const addPathInfo = async (req, res) => {
 
 
 export const getLast8DaysData = async (req, res) => {
-
   try {
-
     const { pathId, timeRange } = req.query;
 
     if (!pathId || !timeRange) {
-
       return res.status(400).json({ message: 'Path ID and Time Range are required.' });
-
     }
 
-    const currentDate = new Date();
+    // Set the date range
+    const currentDate = new Date(new Date().toISOString().split('T')[0]); // Strip time for UTC midnight
+    currentDate.setDate(currentDate.getDate()-1);
+    const startDate = new Date(currentDate);
+    startDate.setDate(currentDate.getDate() - 7);
 
-    const startDate = new Date();
-
-    startDate.setDate(currentDate.getDate() - 8);
-
+    // Query the database
     const data = await PathInfo.find({
-
       pathId,
-
       timeRange,
-
       date: { $gte: startDate, $lte: currentDate },
-
     }).sort({ date: 1 }); // Sort by date in ascending order for graph plotting
 
-    console.log(data);
-
-    // Prepare the data for the line graph (date vs. score)
-
+    // Prepare data for graph
     const graphData = data.map(entry => ({
-
       date: entry.date.toISOString().split('T')[0], // Format date as YYYY-MM-DD
-
       score: entry.score,
-
     }));
 
-
-
+    // Send the response
     res.status(200).json({ message: 'Data retrieved successfully.', data: graphData });
     console.log("Data sent to frontend");
-
   } catch (error) {
-
-    console.error(error);
-
+    console.error("Error fetching last 8 days data:", error);
     res.status(500).json({ message: 'Server error. Please try again later.' });
-
   }
-
 };
 
 
-/*export const getLast8DaysData = async (req, res) => {
+
+
+export const getScoresByTime = async (req, res) => {
+  const { pathId, date } = req.query;
+
+  if (!pathId || !date) {
+    return res.status(400).json({ error: 'pathId and date are required' });
+  }
+
   try {
-    const { pathId, timeRange } = req.query;
-
-    if (!pathId || !timeRange) {
-      return res.status(400).json({ message: 'Path ID and Time Range are required.' });
-    }
-
-    const currentDate = new Date();
-    const startDate = new Date();
-    currentDate.setUTCHours(0, 0, 0, 0); // Reset to midnight UTC
-    startDate.setUTCHours(0, 0, 0, 0);
-    startDate.setDate(currentDate.getDate() - 8); // 8 days ago
-
-    console.log({ pathId, timeRange, startDate, currentDate });
-
+    // Replace with actual database logic
     const data = await PathInfo.find({
       pathId,
-      timeRange,
-      date: { $gte: startDate, $lte: currentDate },
-    }).sort({ date: 1 });
+      date,
+    });
 
-    console.log("Query Result:", data);
+    console.log(data);
 
-    if (data.length === 0) {
-      return res.status(404).json({ message: 'No data found for the selected path and time range.' });
-    }
+    // if (!data.length) {
+    //   return res.status(404).json({ message: 'No data found for the selected path and date' });
+    // }
 
-    const graphData = data.map(entry => ({
-      date: entry.date.toISOString().split('T')[0], // Format date as YYYY-MM-DD
-      score: entry.score,
-    }));
-
-    res.status(200).json({ message: 'Data retrieved successfully.', data: graphData });
-    console.log("Data sent to frontend");
+    res.status(200).json({ data });
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ message: 'Server error. Please try again later.' });
+    console.error('Error fetching data:', error);
+    res.status(500).json({ error: 'An error occurred while fetching data' });
   }
-};*/
+};
 

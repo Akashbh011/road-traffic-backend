@@ -4,7 +4,6 @@ const pathInfoSchema = new mongoose.Schema({
   pathId: {
     type: String,
     required: true,
-    unique: true, 
   },
   timeRange: {
     type: String,
