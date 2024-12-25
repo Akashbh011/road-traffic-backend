@@ -18,7 +18,7 @@ const schoolSchema = new mongoose.Schema({
     },
 
     startTime: {
-        type: Date, 
+        type: String, 
         required: true
     },
 
