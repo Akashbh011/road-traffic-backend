@@ -31,7 +31,7 @@ import cors from "cors" ;
 const app = express();
 const PORT = process.env.PORT || 3001;
 app.use(cors({
-    origin:['https://form-data-collection.onrender.com','https://road-traffic-frontend.onrender.com'], 
+    origin:'https://form-data-collection.onrender.com', 
     credentials: true,              
 }));
 app.use(express.json());
