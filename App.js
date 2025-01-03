@@ -30,22 +30,26 @@ dotenv.config({
 import cors from "cors" ;
 const app = express();
 const PORT = process.env.PORT || 3001;
+const allowedOrigins = [
+    "https://form-data-collection.onrender.com", 
+    "https://road-traffic-frontend.onrender.com"
+];
+
 app.use(cors({
-    origin: [
-        "https://form-data-collection.onrender.com", 
-        "https://road-traffic-frontend.onrender.com"
-    ], 
+    origin: allowedOrigins,
     credentials: true,              
 }));
 
 app.all('*', function(req, res, next) {
-    let origin = req.headers.origin;
-    if(cors.origin.indexOf(origin) >= 0){
+    const origin = req.headers.origin;
+    if (allowedOrigins.includes(origin)) {
         res.header("Access-Control-Allow-Origin", origin);
-    }         
+    }
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
     next();
 });
+
 
 app.use(express.json());
 app.use(cookieParser());
