@@ -32,7 +32,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 app.use(cors({
     origin: [
-        "https://form-data-collection.onrender.com'", 
+        "https://form-data-collection.onrender.com", 
         "https://road-traffic-frontend.onrender.com"
     ], 
     credentials: true,              
