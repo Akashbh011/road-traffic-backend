@@ -5,7 +5,7 @@ import axios from "axios";
 
 export const getNearbySpots = async (req, res) => {
   const { routePoints } = req.body.params;
-  const radius = 1000; 
+  const radius = 200; 
   const pointBatchSize = 7; 
 
   try {

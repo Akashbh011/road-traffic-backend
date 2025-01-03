@@ -67,7 +67,6 @@ export const getAllGardens = async (req, res) => {
     try {
         // Fetch all garden documents from the database
         const gardens = await Garden.find({});
-        console.log(gardens);
         // Send a successful response with the data
         res.status(200).json(gardens);
     } catch (error) {

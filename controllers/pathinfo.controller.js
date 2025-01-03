@@ -3,9 +3,10 @@ import PathInfo from '../models/pathinfo.model.js';
 export const addPathInfo = async (req, res) => {
 
   try {
-
+    console.log("hi");
+    
     const { pathId, timeRange, date, score, level } = req.body;
-
+    console.log(pathId);
     if (!pathId || !timeRange || !date || score == null || !level) {
       return res.status(400).json({ message: 'All fields are required.' });
     }
@@ -16,6 +17,8 @@ export const addPathInfo = async (req, res) => {
 
 
     const existingEntries = await PathInfo.find({ pathId, timeRange, date: formattedDate });
+    console.log(existingEntries);
+    
 
     if (existingEntries.length === 0) {
 

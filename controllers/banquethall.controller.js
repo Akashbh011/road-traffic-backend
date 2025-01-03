@@ -38,7 +38,6 @@ import { BanquetHall } from "../models/banquethall.model.js";
  
  export const getAllBanquetHalls = async (req, res) => {
     try {
-        console.log("Fetching all banquet halls!");
         // Fetch all banquet hall documents
         const banquetHalls = await BanquetHall.find({});
         res.json(banquetHalls); // Send the fetched banquet halls as a response
@@ -50,8 +49,6 @@ import { BanquetHall } from "../models/banquethall.model.js";
 
 export const getAllBanquetHallsByTime = async (req, res) => {
     try {
-        console.log("Fetching banquet halls with ongoing events!");
-
 
         const currentTime = new Date();
 
