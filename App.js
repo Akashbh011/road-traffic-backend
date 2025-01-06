@@ -18,7 +18,7 @@ import schoolRoute from "./routes/school.route.js"
 import traffichotspotRoute from "./routes/traffichotspot.route.js"
 import hotelRoute from "./routes/hotel.route.js"
 import PathInfoRoute from "./routes/pathinfo.route.js";
-
+import trafficStatusRoute from "./routes/trafficstatus.route.js"
 
 import cookieParser from "cookie-parser";
 
@@ -83,3 +83,4 @@ app.use("/api/parkingbuilding", parkingbuildingRoute);
 app.use("/api/school", schoolRoute);
 app.use("/api/traffichotspot", traffichotspotRoute);
 app.use("/api/path-info",PathInfoRoute);
+app.use("/api/traffic-status",trafficStatusRoute);
