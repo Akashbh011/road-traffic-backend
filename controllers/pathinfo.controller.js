@@ -2,8 +2,9 @@ import PathInfo from '../models/pathinfo.model.js';
 
 export const addPathInfo = async (req, res) => {
 
+  console.log("hi");
+
   try {
-    console.log("hi");
     
     const { pathId, timeRange, date, score, level } = req.body;
     console.log(pathId);
@@ -17,7 +18,6 @@ export const addPathInfo = async (req, res) => {
 
 
     const existingEntries = await PathInfo.find({ pathId, timeRange, date: formattedDate });
-    console.log(existingEntries);
     
 
     if (existingEntries.length === 0) {
@@ -38,6 +38,9 @@ export const addPathInfo = async (req, res) => {
 
       await newPathInfo.save();
 
+      console.log("new entry");
+      
+
       return res.status(201).json({ message: 'Path info added successfully.', data: newPathInfo });
 
     } else {
@@ -53,6 +56,12 @@ export const addPathInfo = async (req, res) => {
         { $set: { score: newScore, level } }
 
       );
+
+      
+
+      console.log("updated entry");
+      console.log(newScore);
+      
 
 
       return res.status(200).json({
@@ -73,60 +82,6 @@ export const addPathInfo = async (req, res) => {
 
   }
 };
-
-
-export const getLast8DaysDataForAllPaths = async (req, res) => {
-  try {
-    const { timeRange } = req.query;
-
-    if (!timeRange) {
-      return res.status(400).json({ message: 'Time Range is required.' });
-    }
-
-    const currentDate = new Date(new Date().toISOString().split('T')[0]);
-    currentDate.setDate(currentDate.getDate() - 1);
-    const startDate = new Date(currentDate);
-    startDate.setDate(currentDate.getDate() - 7);
-
-    const paths = ['Katraj-Kondhwa', 'Swargate-Katraj', 'Kothrud-Shivajinagar'];
-    const data = {};
-
-    // Fetch data for each path
-    for (const pathId of paths) {
-      const pathData = await PathInfo.find({
-        pathId,
-        timeRange,
-        date: { $gte: startDate, $lte: currentDate },
-      }).sort({ date: 1 });
-
-      data[pathId] = pathData.map(entry => ({
-        date: entry.date.toISOString().split('T')[0],
-        score: entry.score,
-      }));
-    }
-
-    // Structure response for triple line graph
-    const responseData = {
-      labels: data[paths[0]].map(entry => entry.date), // Dates are common across paths
-      datasets: paths.map((pathId, index) => ({
-        label: pathId,
-        data: data[pathId].map(entry => entry.score),
-        borderColor: index === 0 ? 'red' : index === 1 ? 'blue' : 'green',
-        borderWidth: 2,
-        fill: false,
-      })),
-    };
-
-    res.status(200).json({ message: 'Data for all paths retrieved successfully.', data: responseData });
-    console.log("Data for all paths sent to frontend");
-  } catch (error) {
-    console.error("Error fetching last 8 days data for all paths:", error);
-    res.status(500).json({ message: 'Server error. Please try again later.' });
-  }
-};
-
-
-
 
 
 
@@ -159,7 +114,6 @@ export const getLast8DaysData = async (req, res) => {
 
     // Send the response
     res.status(200).json({ message: 'Data retrieved successfully.', data: graphData });
-    console.log("Data sent to frontend");
   } catch (error) {
     console.error("Error fetching last 8 days data:", error);
     res.status(500).json({ message: 'Server error. Please try again later.' });
@@ -205,9 +159,6 @@ export const getLast8DaysData = async (req, res) => {
 export const getScoresByTime = async (req, res) => {
   const { pathId, date } = req.query;
 
-  console.log(pathId);
-  console.log(date);
-
   if (!pathId || !date) {
     return res.status(400).json({ error: 'pathId and date are required' });
   }
@@ -228,7 +179,6 @@ export const getScoresByTime = async (req, res) => {
       },
     });
 
-    console.log(data);
 
     if (!data.length) {
       return res.status(404).json({ message: 'No data found for the selected path and date' });

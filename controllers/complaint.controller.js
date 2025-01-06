@@ -43,7 +43,6 @@ export const registerComplaint = async (req, res) => {
 
 export const getComplaintDatamodel = async (req, res) => {
     try {
-      console.log("this is the backend call !");
         const complaints = await Complaint.find({});
         res.json(complaints);
 

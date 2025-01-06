@@ -70,7 +70,6 @@ export const getPrediction = async (req, res) => {
 
 export const getPotholeDatamodel = async (req, res) => {
     try {
-      console.log("this is the backend call !");
         const images = await Image.find({});
         res.json(images);
 
