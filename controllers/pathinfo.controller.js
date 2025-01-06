@@ -140,9 +140,9 @@ export const getLast8DaysData = async (req, res) => {
 
     // Set the date range
     const currentDate = new Date(new Date().toISOString().split('T')[0]); // Strip time for UTC midnight
-    currentDate.setDate(currentDate.getDate()-1);
+    currentDate.setDate(currentDate.getDate());
     const startDate = new Date(currentDate);
-    startDate.setDate(currentDate.getDate() - 7);
+    startDate.setDate(currentDate.getDate() - 8);
 
     // Query the database
     const data = await PathInfo.find({
@@ -169,12 +169,18 @@ export const getLast8DaysData = async (req, res) => {
 
 
 
-export const getScoresByTime = async (req, res) => {
+/*export const getScoresByTime = async (req, res) => {
   const { pathId, date } = req.query;
+
+  console.log(pathId);
+  console.log(date);
+  
+  
 
   if (!pathId || !date) {
     return res.status(400).json({ error: 'pathId and date are required' });
   }
+    
 
   try {
     // Replace with actual database logic
@@ -194,5 +200,45 @@ export const getScoresByTime = async (req, res) => {
     console.error('Error fetching data:', error);
     res.status(500).json({ error: 'An error occurred while fetching data' });
   }
+};*/
+
+export const getScoresByTime = async (req, res) => {
+  const { pathId, date } = req.query;
+
+  console.log(pathId);
+  console.log(date);
+
+  if (!pathId || !date) {
+    return res.status(400).json({ error: 'pathId and date are required' });
+  }
+
+  try {
+    // Parse the date from the frontend to a Date object
+    const startOfDay = new Date(date);
+    const endOfDay = new Date(date);
+    endOfDay.setDate(endOfDay.getDate() + 1); // Move to the next day
+    endOfDay.setMilliseconds(-1); // Set time to the last millisecond of the day
+
+    // Query the database for the range
+    const data = await PathInfo.find({
+      pathId,
+      date: {
+        $gte: startOfDay,
+        $lte: endOfDay,
+      },
+    });
+
+    console.log(data);
+
+    if (!data.length) {
+      return res.status(404).json({ message: 'No data found for the selected path and date' });
+    }
+
+    res.status(200).json({ data });
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    res.status(500).json({ error: 'An error occurred while fetching data' });
+  }
 };
+
 

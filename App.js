@@ -32,7 +32,8 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const allowedOrigins = [
     "https://form-data-collection.onrender.com", 
-    "https://road-traffic-frontend.onrender.com"
+    "https://road-traffic-frontend.onrender.com",
+    "http://localhost:5173"
 ];
 
 app.use(cors({
