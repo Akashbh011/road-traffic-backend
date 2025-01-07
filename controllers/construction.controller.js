@@ -15,7 +15,6 @@ export const createConstructionProject = async (req, res) => {
         status
       } = req.body;
 
-      console.log(projectName+" "+vendorName+" "+type+" "+constructionPoints+" "+startDate+" "+expectedEndDate+" "+status);
   
       if (!Array.isArray(constructionPoints) || constructionPoints.length === 0) {
         return res.status(400).json({
@@ -34,8 +33,6 @@ export const createConstructionProject = async (req, res) => {
           });
         }
       }
-
-      console.log("hi");
       
   
       const newConstruction = new Construction({
