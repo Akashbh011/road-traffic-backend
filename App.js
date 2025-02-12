@@ -15,10 +15,9 @@ import hospitalRoute from "./routes/hospital.route.js"
 import mallRoute from "./routes/mall.route.js"
 import parkingbuildingRoute from "./routes/parkingbuilding.route.js"
 import schoolRoute from "./routes/school.route.js"
-import traffichotspotRoute from "./routes/traffichotspot.route.js"
 import hotelRoute from "./routes/hotel.route.js"
 import PathInfoRoute from "./routes/pathinfo.route.js";
-import trafficStatusRoute from "./routes/trafficstatus.route.js"
+import trafficStatusRoute from "./routes/trafficstatus.route.js";
 
 import cookieParser from "cookie-parser";
 
@@ -81,6 +80,5 @@ app.use("/api/hospital", hospitalRoute);
 app.use("/api/mall", mallRoute);
 app.use("/api/parkingbuilding", parkingbuildingRoute);
 app.use("/api/school", schoolRoute);
-app.use("/api/traffichotspot", traffichotspotRoute);
 app.use("/api/path-info",PathInfoRoute);
 app.use("/api/traffic-status",trafficStatusRoute);

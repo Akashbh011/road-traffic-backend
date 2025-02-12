@@ -2,11 +2,15 @@ import mongoose from 'mongoose';
 
 // Define the schema
 const trafficStatusSchema = new mongoose.Schema({
-    name: {
+    latitude: {
         type: String,
         required: true
     },
-    status: {
+    longitude: {
+        type: String,
+        required: true
+    },
+    category: {
         type: String, 
         required: true
     }

@@ -8,7 +8,10 @@ import { User } from "../models/user.model.js";
 
 export const getPrediction = async (req, res) => {
   try {
-    const { userId,lng,lat } = req.body; 
+    const { lng,lat } = req.body; 
+    
+    const userId = req.userId;
+    
 
     const uploadedImage = req.file;
 

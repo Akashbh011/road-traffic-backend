@@ -7,8 +7,7 @@ const router = express.Router();
 
 
 router.post("/",verifyToken,upload.single('image'), getPrediction);
-router.get("/getPotholeData",verifyToken,getPotholeDatamodel);
-
+router.get("/getPotholeData",getPotholeDatamodel);
 
 
 export default router;

@@ -4,7 +4,7 @@ import { addOrUpdateTrafficStatus, getTrafficStatus } from '../controllers/statu
 const router = express.Router();
 
 router.post('/',addOrUpdateTrafficStatus);
-router.post('/getTrafficStatus',getTrafficStatus);
+router.get('/getTrafficStatus',getTrafficStatus);
 
 
 export default router;

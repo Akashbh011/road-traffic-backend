@@ -1,8 +1,8 @@
 import express from 'express';
 const router = express.Router();
-import { getNearbyPlaceData,getNearbySpots } from '../controllers/nearby.controller.js';
-import { verifyToken } from '../middlewares/verifyToken.js';
+import { getNearbyPlaceData,getNearbySpots, createTrafficHotspot  } from '../controllers/nearby.controller.js';
 
-router.post('/',verifyToken,getNearbyPlaceData); 
-router.post('/hotspots',verifyToken,getNearbySpots); 
+router.post('/',createTrafficHotspot); 
+router.post('/schools',getNearbyPlaceData); 
+router.post('/hotspots',getNearbySpots); 
 export default router;

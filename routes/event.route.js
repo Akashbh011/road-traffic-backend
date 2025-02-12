@@ -5,5 +5,5 @@ import { verifyToken } from '../middlewares/verifyToken.js';
 
 
 router.post('/',registerEvent); 
-router.get('/getEventData',verifyToken,getEventDatamodel); 
+router.get('/getEventData',getEventDatamodel); 
 export default router;

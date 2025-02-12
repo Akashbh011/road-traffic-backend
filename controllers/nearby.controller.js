@@ -2,9 +2,36 @@
 import { hotspotLocation } from '../models/nearbyHotspot.model.js' 
 import axios from "axios";
 
+export const createTrafficHotspot = async (req, res) => {
+    try {
+        const { latitude, longitude, landmark } = req.body;
+
+        // Create a new TrafficHotspot document
+        const newHotspot = new hotspotLocation({
+            latitude,
+            longitude,
+            location:landmark
+        });
+
+        const savedHotspot = await newHotspot.save();
+
+        res.status(201).json({
+            message: 'Traffic hotspot created successfully',
+            data: savedHotspot
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error creating traffic hotspot',
+            error: error.message
+        });
+    }
+};
+
+
 
 export const getNearbySpots = async (req, res) => {
   const { routePoints } = req.body.params;
+  
   const radius = 200; 
   const pointBatchSize = 7; 
 
@@ -14,7 +41,7 @@ export const getNearbySpots = async (req, res) => {
     let nearbySpots = [];
 
     const hotspots = await hotspotLocation.find({});
-
+    
     for (let point of filteredPoints) {
       const nearbyLocations = hotspots.filter(spot => {
         const distance = calculateDistance(point, { lat: spot.lat, lng: spot.lng });
@@ -24,6 +51,9 @@ export const getNearbySpots = async (req, res) => {
 
       nearbySpots = [...nearbySpots, ...nearbyLocations];
     }
+
+    console.log(nearbySpots);
+    
 
     const uniqueNearbySpots = Array.from(new Set(nearbySpots.map(spot => spot.location)))
       .map(locationName => nearbySpots.find(spot => spot.location === locationName));
