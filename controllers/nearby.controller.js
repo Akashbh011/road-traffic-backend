@@ -28,6 +28,29 @@ export const createTrafficHotspot = async (req, res) => {
 };
 
 
+export const getAllSpots = async (req, res) => {
+  
+  
+  
+
+  try {
+
+    
+
+    const spots = await hotspotLocation.find({});
+    // console.log("backend hotspots : ",spots);
+    
+    res.status(200).json(spots);
+  } catch (error) {
+    console.error("Error fetching nearby traffic spots:", error);
+    res.status(500).json({ error: "Error fetching nearby traffic spots" });
+  }
+};
+
+
+
+
+
 
 export const getNearbySpots = async (req, res) => {
   const { routePoints } = req.body.params;

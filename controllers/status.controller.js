@@ -24,7 +24,7 @@ export const getTrafficStatus = async (req, res) => {
     const trafficEntries = await TrafficStatus.find();
 
     // Return the entries in the response
-    res.status(200).json({ message: 'Traffic statuses retrieved successfully', data: trafficEntries });
+    res.status(200).json(trafficEntries);
   } catch (error) {
     console.error('Error in getTrafficStatus:', error);
     res.status(500).json({ error: 'An error occurred while fetching traffic statuses' });

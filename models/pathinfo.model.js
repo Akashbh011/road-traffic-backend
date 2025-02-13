@@ -25,7 +25,7 @@ const pathInfoSchema = new mongoose.Schema({
   level: {
     type: String,
     required: true,
-    enum: ['low', 'medium', 'high'], 
+    enum: ['low', 'medium', 'high','very high','very low'], 
   },
 }, {
   timestamps: true, 

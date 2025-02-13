@@ -16,20 +16,18 @@ export const addPathInfo = async (req, res) => {
     let date = new Date(req.body.date);
     date = new Date(date.getTime() + (5.5 * 60 * 60 * 1000));
     console.log(date);
-    
+    console.log("score is --",score);
     if (!pathId || !timeRange || !date || score == null || !level) {
       return res.status(400).json({ message: 'All fields are required.' });
     }
 
     const formattedDate = new Date(date);
-
-    formattedDate.setHours(0, 0, 0, 0);
-
-
-    const existingEntries = await PathInfo.find({ pathId, timeRange, date: formattedDate });
+    formattedDate.setHours(0,0,0,0);
+    
+    const existingEntries = await PathInfo.find({ pathId, timeRange, date: date });
     
 
-    if (existingEntries.length === 0) {
+    if (existingEntries.length === 0 && score!=0 ) {
 
       const newPathInfo = new PathInfo({
 
@@ -37,7 +35,7 @@ export const addPathInfo = async (req, res) => {
 
         timeRange,
 
-        date: formattedDate,
+        date: date,
 
         score,
 
