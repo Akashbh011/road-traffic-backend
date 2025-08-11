@@ -2,20 +2,6 @@
 
 A comprehensive backend system for traffic analysis and management developed for the Government of Pune. This project provides APIs for traffic prediction, complaint management, event tracking, and infrastructure monitoring.
 
-## 📋 Table of Contents
-
-- [Overview](#overview)
-- [Features](#features)
-- [Architecture](#architecture)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Environment Setup](#environment-setup)
-- [Running the Services](#running-the-services)
-- [API Endpoints](#api-endpoints)
-- [Database Models](#database-models)
-- [Contributing](#contributing)
-- [Collaborators](#collaborators)
-
 ## 🔍 Overview
 
 This backend system consists of two main services:
