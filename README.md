@@ -60,8 +60,8 @@ Traffic Analysis Backend
 
 ### 1. Clone the Repository
 ```bash
-git clone <repository-url>
-cd traffic-analysis-backend
+git clone https://github.com/Akashbh011/road-traffic-backend
+cd road-traffic-backend
 ```
 
 ### 2. Install Node.js Dependencies
@@ -280,14 +280,6 @@ The Flask service (`pothole-model/app.py`) provides:
 4. **CORS Errors**
    - Verify frontend URL is in allowedOrigins array
    - Check that credentials are properly configured
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
 
 ## 👥 Collaborators
 
